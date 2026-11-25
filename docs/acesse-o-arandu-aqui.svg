@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="620" height="120" viewBox="0 0 620 120" role="img" aria-label="ACESSE O ARANDU AQUI">
+  <title>ACESSE O ARANDU AQUI</title>
+  <defs>
+    <filter id="glow" x="-20%" y="-60%" width="140%" height="220%">
+      <feGaussianBlur stdDeviation="5" result="b1"/>
+      <feGaussianBlur stdDeviation="12" result="b2"/>
+      <feMerge><feMergeNode in="b2"/><feMergeNode in="b1"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="textglow" x="-10%" y="-60%" width="120%" height="220%">
+      <feGaussianBlur stdDeviation="3" result="t1"/>
+      <feGaussianBlur stdDeviation="8" result="t2"/>
+      <feMerge><feMergeNode in="t2"/><feMergeNode in="t1"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <style>
+      .frame { animation: pulse 2.4s ease-in-out infinite; }
+      .label { animation: flicker 6s linear infinite; }
+      @keyframes pulse { 0%, 100% { opacity: .85; stroke-width: 3; } 50% { opacity: 1; stroke-width: 4.5; } }
+      @keyframes flicker { 0%, 90%, 92%, 95%, 100% { opacity: 1; } 91%, 94% { opacity: .45; } }
+      @media (prefers-reduced-motion: reduce) { .frame, .label { animation: none; } }
+    </style>
+  </defs>
+  <rect x="14" y="16" width="592" height="88" rx="24" fill="#032a21"/>
+  <rect class="frame" x="14" y="16" width="592" height="88" rx="24" fill="none" stroke="#3dffb0" stroke-width="3.5" filter="url(#glow)"/>
+  <g class="label" filter="url(#textglow)" fill="#eafff6">
+    <text x="292" y="71" text-anchor="middle" font-family="-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="30" font-weight="800" letter-spacing="3">ACESSE O ARANDU AQUI</text>
+    <path d="M522 60h30m-11-11 11 11-11 11" stroke="#eafff6" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

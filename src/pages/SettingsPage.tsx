@@ -6,6 +6,7 @@ import { db } from '../services/db';
 import { usePwa, promptInstall } from '../services/pwa';
 import { useHardware, refreshOcrStatus } from '../hooks/useAppState';
 import { removeOcrAssets } from '../modules/ocr/ocrAssets';
+import { resetOnboarding } from '../components/Onboarding';
 import { fmtBytes } from '../utils/format';
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -55,7 +56,10 @@ export default function SettingsPage() {
             {pwa.installed ? 'O ARANDU está instalado neste dispositivo.' : pwa.canInstall ? 'Este navegador permite instalar o ARANDU como aplicativo.' : 'Para instalar: no Chrome/Edge use o ícone de instalação na barra de endereço; no Safari (macOS) use Arquivo › Adicionar ao Dock; no iPhone/iPad use Compartilhar › Adicionar à Tela de Início; no Android use o menu › Instalar app.'}
           </p>
           <p className="mt-2 text-[13px] text-ink-500">Offline: {pwa.swActive ? 'aplicativo em cache — abre sem internet.' : import.meta.env.DEV ? 'indisponível no modo desenvolvimento (use o build de produção).' : 'aguardando o service worker.'}</p>
-          {pwa.canInstall && !pwa.installed && <Button className="mt-3" variant="primary" onClick={() => promptInstall()}><Icon name="download" size={14} /> Instalar ARANDU</Button>}
+          <div className="mt-3 flex flex-wrap gap-2">
+            {pwa.canInstall && !pwa.installed && <Button variant="primary" onClick={() => promptInstall()}><Icon name="download" size={14} /> Instalar ARANDU</Button>}
+            <Button onClick={resetOnboarding}>Rever apresentação e guia de instalação</Button>
+          </div>
         </Section>
 
         <Section title="Processamento">

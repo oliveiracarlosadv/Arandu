@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ARANDU — Converta PDF e documentos em Markdown para IA | Gratuito, OCR e 100% local</title>
+  <meta name="description" content="ARANDU converte PDF, DOCX, ODT, RTF, TXT e imagens em Markdown otimizado para ChatGPT, Claude e Gemini, com OCR em português e análise jurídica. Gratuito, código aberto e 100% no seu dispositivo: nenhum documento é enviado a servidores." />
+  <meta name="keywords" content="ARANDU, PDF para Markdown, converter PDF em Markdown, Markdown para IA, reduzir tokens, economia de tokens, OCR português, OCR gratuito, PDF digitalizado, DOCX para Markdown, ChatGPT, Claude, Gemini, LLM, advocacia, documentos jurídicos, petição, sentença, acórdão, processo CNJ, legaltech, inteligência artificial jurídica, privacidade, LGPD, offline, PWA, código aberto" />
+  <meta name="author" content="Carlos Alexandre Albuquerque Oliveira" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+  <meta name="googlebot" content="index, follow" />
+  <meta name="language" content="pt-BR" />
+  <meta name="application-name" content="ARANDU" />
+  <meta name="theme-color" content="#053b2c" />
+  <link rel="canonical" href="https://oliveiracarlosadv.github.io/Arandu/" />
+  <link rel="sitemap" type="application/xml" href="https://oliveiracarlosadv.github.io/Arandu/sitemap.xml" />
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="assets/icon-192.png" />
+
+  <!-- Open Graph (Facebook, LinkedIn, WhatsApp) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="ARANDU" />
+  <meta property="og:locale" content="pt_BR" />
+  <meta property="og:url" content="https://oliveiracarlosadv.github.io/Arandu/" />
+  <meta property="og:title" content="ARANDU — Seus documentos. Menos tokens. Mais inteligência." />
+  <meta property="og:description" content="Converta PDF, DOCX e imagens em Markdown otimizado para IA, com OCR e análise jurídica. Gratuito, open source e 100% no seu dispositivo." />
+  <meta property="og:image" content="https://oliveiracarlosadv.github.io/Arandu/assets/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Logotipo do ARANDU: um A em forma de oca indígena" />
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="ARANDU — documentos prontos para IA, com privacidade total" />
+  <meta name="twitter:description" content="PDF, DOCX e imagens → Markdown otimizado para IA. OCR, análise jurídica, gratuito e 100% local." />
+  <meta name="twitter:image" content="https://oliveiracarlosadv.github.io/Arandu/assets/og-image.png" />
+
+  <!-- Dados estruturados (Google) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "name": "ARANDU",
+        "alternateName": "Arandu — documentos para IA",
+        "description": "Aplicativo web gratuito e de código aberto que converte PDF, DOCX, ODT, RTF, TXT e imagens em Markdown otimizado para inteligência artificial, com OCR em português e análise de documentos jurídicos, processando tudo localmente no dispositivo.",
+        "url": "https://oliveiracarlosadv.github.io/Arandu/",
+        "installUrl": "https://oliveiracarlosadv.github.io/Arandu/app/",
+        "applicationCategory": "BusinessApplication",
+        "applicationSubCategory": "Conversão de documentos",
+        "operatingSystem": "Windows, macOS, Linux, Android, iOS (navegador)",
+        "inLanguage": "pt-BR",
+        "isAccessibleForFree": true,
+        "license": "https://opensource.org/licenses/MIT",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "BRL" },
+        "featureList": ["PDF para Markdown", "OCR em português", "PDF digitalizado", "DOCX, ODT, RTF e TXT", "Redução de tokens", "Análise jurídica", "Processamento em lote", "Funciona offline"],
+        "screenshot": "https://oliveiracarlosadv.github.io/Arandu/assets/app-inicio.jpg",
+        "image": "https://oliveiracarlosadv.github.io/Arandu/assets/og-image.png",
+        "author": { "@id": "https://oliveiracarlosadv.github.io/Arandu/#criador" },
+        "codeRepository": "https://github.com/oliveiracarlosadv/Arandu"
+      },
+      {
+        "@type": "Person",
+        "@id": "https://oliveiracarlosadv.github.io/Arandu/#criador",
+        "name": "Carlos Alexandre Albuquerque Oliveira",
+        "jobTitle": "Advogado",
+        "homeLocation": { "@type": "Place", "name": "Belém, Pará, Brasil" },
+        "sameAs": ["https://github.com/oliveiracarlosadv"]
+      },
+      {
+        "@type": "WebSite",
+        "name": "ARANDU",
+        "url": "https://oliveiracarlosadv.github.io/Arandu/",
+        "inLanguage": "pt-BR"
+      }
+    ]
+  }
+  </script>
+  <style>
+    :root {
+      --g950: #032a21; --g900: #053b2c; --g800: #085a44; --g700: #087254; --g600: #0a8f65; --g500: #10b07c; --g400: #34cf96; --g200: #a6f2d2; --g100: #d1fae8; --g50: #ecfdf6;
+      --ink: #111513; --ink2: #363d3b; --ink3: #67716d; --line: #e3e7e5; --bg: #f7f8f8;
+      --radius: 20px;
+      --font: ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+      --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; font-family: var(--font); color: var(--ink); background: #fff; -webkit-font-smoothing: antialiased; line-height: 1.6; }
+    a { color: var(--g700); }
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+    .nav { position: sticky; top: 0; z-index: 10; backdrop-filter: saturate(180%) blur(14px); background: rgba(3, 42, 33, .78); border-bottom: 1px solid rgba(255,255,255,.08); }
+    .nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 62px; }
+    .brand { display: flex; align-items: center; gap: 10px; color: #fff; text-decoration: none; font-weight: 600; letter-spacing: .24em; font-size: 14px; }
+    .brand img { width: 30px; height: 30px; }
+    .nav ul { display: flex; gap: 22px; list-style: none; margin: 0; padding: 0; }
+    .nav ul a { color: rgba(255,255,255,.78); text-decoration: none; font-size: 14px; }
+    .nav ul a:hover { color: #fff; }
+    .nav .mini { display: none; }
+    @media (max-width: 820px) { .nav ul { display: none; } .nav .mini { display: inline-flex; } }
+
+    .hero { position: relative; overflow: hidden; color: #fff; background: radial-gradient(1200px 600px at 80% -10%, rgba(52,207,150,.35), transparent 60%), radial-gradient(900px 500px at -10% 110%, rgba(16,176,124,.25), transparent 60%), linear-gradient(160deg, var(--g950), var(--g900) 45%, var(--g800)); }
+    .hero .wrap { display: grid; grid-template-columns: 1.05fr .95fr; gap: 48px; align-items: center; padding-top: 88px; padding-bottom: 96px; }
+    @media (max-width: 920px) { .hero .wrap { grid-template-columns: 1fr; padding-top: 56px; } }
+    .pill { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); font-size: 13px; color: var(--g100); }
+    .pill i { width: 7px; height: 7px; border-radius: 50%; background: var(--g400); box-shadow: 0 0 0 4px rgba(52,207,150,.2); }
+    .hero h1 { font-size: clamp(44px, 7vw, 76px); line-height: 1; letter-spacing: -.03em; margin: 22px 0 14px; }
+    .hero .slogan { font-size: clamp(19px, 2.3vw, 24px); color: var(--g100); margin: 0 0 18px; font-weight: 500; }
+    .hero p.lead { font-size: 17px; color: rgba(236,253,246,.82); max-width: 560px; margin: 0 0 34px; }
+    /* Botão neon "ACESSE O ARANDU AQUI" */
+    .neon { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 14px; padding: 22px 40px; border-radius: 18px; background: rgba(3, 42, 33, .85); color: #eafff6; font-size: clamp(17px, 2.4vw, 23px); font-weight: 800; letter-spacing: .09em; text-decoration: none; border: 2px solid #3dffb0;
+      text-shadow: 0 0 4px #fff, 0 0 10px #3dffb0, 0 0 22px #3dffb0, 0 0 42px #10b07c;
+      box-shadow: 0 0 6px #3dffb0, 0 0 18px #3dffb0, 0 0 42px rgba(61,255,176,.55), inset 0 0 14px rgba(61,255,176,.45);
+      animation: neon-pulse 2.4s ease-in-out infinite, neon-flicker 7s linear infinite; transition: transform .15s ease; }
+    .neon:hover { transform: translateY(-2px) scale(1.02); background: rgba(5, 59, 44, .95); }
+    .neon svg { width: 26px; height: 26px; filter: drop-shadow(0 0 6px #3dffb0); }
+    @keyframes neon-pulse {
+      0%, 100% { box-shadow: 0 0 6px #3dffb0, 0 0 18px #3dffb0, 0 0 42px rgba(61,255,176,.55), inset 0 0 14px rgba(61,255,176,.45); }
+      50% { box-shadow: 0 0 10px #3dffb0, 0 0 30px #3dffb0, 0 0 70px rgba(61,255,176,.8), inset 0 0 22px rgba(61,255,176,.6); }
+    }
+    @keyframes neon-flicker { 0%, 91%, 93%, 96%, 100% { opacity: 1; } 92%, 95% { opacity: .55; } }
+    @media (prefers-reduced-motion: reduce) { .neon { animation: none; } }
+    .cta { display: inline-flex; align-items: center; justify-content: center; gap: 14px; padding: 22px 44px; border-radius: 18px; background: linear-gradient(180deg, #4be0a7, var(--g500)); color: var(--g950); font-size: 22px; font-weight: 800; letter-spacing: .06em; text-decoration: none; box-shadow: 0 18px 40px -12px rgba(16,176,124,.65), inset 0 1px 0 rgba(255,255,255,.5); transition: transform .15s ease, box-shadow .15s ease; }
+    .cta:hover { transform: translateY(-2px); box-shadow: 0 24px 50px -12px rgba(16,176,124,.8), inset 0 1px 0 rgba(255,255,255,.5); }
+    .cta svg { width: 26px; height: 26px; }
+    .cta-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+    .ghost { display: inline-flex; align-items: center; gap: 8px; padding: 14px 20px; border-radius: 14px; color: #fff; text-decoration: none; border: 1px solid rgba(255,255,255,.22); font-weight: 600; font-size: 15px; }
+    .ghost:hover { background: rgba(255,255,255,.08); }
+    .trust { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 30px; font-size: 13.5px; color: rgba(236,253,246,.75); }
+    .trust span::before { content: "✓ "; color: var(--g400); font-weight: 700; }
+    .shot { position: relative; }
+    .shot img { width: 100%; display: block; border-radius: 16px; box-shadow: 0 40px 80px -20px rgba(0,0,0,.55); border: 1px solid rgba(255,255,255,.12); }
+    .shot .badge { position: absolute; left: -18px; bottom: 28px; background: #fff; color: var(--ink); border-radius: 14px; padding: 12px 16px; box-shadow: 0 20px 40px -12px rgba(0,0,0,.35); font-size: 13px; }
+    .shot .badge b { display: block; font-size: 22px; color: var(--g700); }
+    @media (max-width: 920px) { .shot .badge { left: 12px; } }
+
+    section { padding: 96px 0; }
+    .eyebrow { font-size: 12.5px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--g600); }
+    h2 { font-size: clamp(30px, 4vw, 42px); line-height: 1.1; letter-spacing: -.02em; margin: 10px 0 14px; }
+    .sub { font-size: 17.5px; color: var(--ink3); max-width: 720px; margin: 0; }
+    .grid { display: grid; gap: 18px; margin-top: 44px; }
+    .g3 { grid-template-columns: repeat(3, 1fr); } .g2 { grid-template-columns: repeat(2, 1fr); } .g4 { grid-template-columns: repeat(4, 1fr); }
+    @media (max-width: 920px) { .g3, .g4 { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 620px) { .g3, .g2, .g4 { grid-template-columns: 1fr; } }
+    .card { border: 1px solid var(--line); border-radius: var(--radius); padding: 26px; background: #fff; }
+    .card h3 { margin: 14px 0 6px; font-size: 18px; letter-spacing: -.01em; }
+    .card p { margin: 0; color: var(--ink3); font-size: 15px; }
+    .ico { width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center; background: var(--g50); color: var(--g700); border: 1px solid var(--g100); }
+    .ico svg { width: 22px; height: 22px; }
+    .alt { background: var(--bg); }
+    .problem { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-top: 44px; }
+    @media (max-width: 820px) { .problem { grid-template-columns: 1fr; } }
+    .problem .card { padding: 30px; }
+    .problem .before { background: #fff; }
+    .problem .after { background: linear-gradient(160deg, var(--g950), var(--g800)); color: #fff; border: 0; }
+    .problem .after p, .problem .after li { color: var(--g100); }
+    .problem ul { margin: 12px 0 0; padding-left: 20px; color: var(--ink3); }
+    .problem li { margin: 6px 0; }
+    .tag { display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; background: #fde8e8; color: #9b1c1c; }
+    .after .tag { background: rgba(52,207,150,.18); color: var(--g200); }
+
+    .steps { counter-reset: s; }
+    .step { position: relative; padding-top: 62px; }
+    .step::before { counter-increment: s; content: counter(s); position: absolute; top: 22px; left: 26px; width: 34px; height: 34px; border-radius: 50%; background: var(--g700); color: #fff; font-weight: 700; display: grid; place-items: center; }
+    .modes .card { border-top: 4px solid var(--g500); }
+
+    .privacy { background: linear-gradient(160deg, var(--g950), var(--g900)); color: #fff; }
+    .privacy .sub { color: var(--g100); }
+    .privacy .card { background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.1); }
+    .privacy .card p { color: rgba(236,253,246,.75); }
+    .privacy .ico { background: rgba(52,207,150,.12); border-color: rgba(52,207,150,.25); color: var(--g400); }
+    .privacy .eyebrow { color: var(--g400); }
+
+    table { width: 100%; border-collapse: collapse; font-size: 15px; }
+    th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { font-size: 12.5px; text-transform: uppercase; letter-spacing: .08em; color: var(--ink3); }
+    code, pre { font-family: var(--mono); }
+    pre { background: var(--g950); color: var(--g100); padding: 20px 22px; border-radius: 16px; overflow: auto; font-size: 14px; line-height: 1.7; margin: 0; }
+    .doc-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 22px; margin-top: 44px; }
+    @media (max-width: 920px) { .doc-grid { grid-template-columns: 1fr; } }
+    details { border: 1px solid var(--line); border-radius: 14px; padding: 14px 18px; background: #fff; margin-bottom: 10px; }
+    details summary { cursor: pointer; font-weight: 600; }
+    details p, details ul { color: var(--ink3); font-size: 15px; margin: 10px 0 0; }
+
+    .oss { display: grid; grid-template-columns: 1fr auto; gap: 30px; align-items: center; }
+    @media (max-width: 820px) { .oss { grid-template-columns: 1fr; } }
+    .btn-dark { display: inline-flex; align-items: center; gap: 10px; padding: 14px 22px; border-radius: 14px; background: var(--ink); color: #fff; text-decoration: none; font-weight: 600; }
+    .btn-dark svg { width: 20px; height: 20px; }
+
+    .creator { display: grid; grid-template-columns: 280px 1fr; gap: 40px; align-items: start; margin-top: 44px; }
+    @media (max-width: 820px) { .creator { grid-template-columns: 1fr; } }
+    .creator .id { border-radius: var(--radius); padding: 30px; background: linear-gradient(160deg, var(--g900), var(--g700)); color: #fff; text-align: center; }
+    .avatar { width: 96px; height: 96px; margin: 0 auto 16px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.12); border: 2px solid rgba(255,255,255,.3); font-size: 34px; font-weight: 700; letter-spacing: .02em; }
+    .creator .id h3 { margin: 0; font-size: 19px; }
+    .creator .id p { margin: 6px 0 0; color: var(--g100); font-size: 14px; }
+    .creator .id ul { list-style: none; padding: 0; margin: 20px 0 0; font-size: 14px; text-align: left; }
+    .creator .id li { padding: 8px 0; border-top: 1px solid rgba(255,255,255,.12); word-break: break-word; }
+    .creator .id a { color: #fff; }
+    .bio p { color: var(--ink2); font-size: 16.5px; margin: 0 0 16px; }
+    .bio blockquote { margin: 26px 0 0; padding: 18px 22px; border-left: 4px solid var(--g500); background: var(--g50); border-radius: 0 14px 14px 0; font-size: 17px; color: var(--g900); font-style: italic; }
+
+    .final { text-align: center; color: #fff; background: radial-gradient(800px 400px at 50% 0%, rgba(52,207,150,.3), transparent 70%), linear-gradient(180deg, var(--g900), var(--g950)); }
+    .final h2 { color: #fff; }
+    .final .sub { color: var(--g100); margin: 0 auto 36px; }
+    footer { background: var(--g950); color: rgba(236,253,246,.6); font-size: 13.5px; padding: 30px 0; border-top: 1px solid rgba(255,255,255,.06); }
+    footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+    footer a { color: var(--g200); }
+  </style>
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Zm0 0v5h5M9 13h6M9 17h4"/></symbol>
+    <symbol id="i-scan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2M7 12h10"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z"/></symbol>
+    <symbol id="i-scale" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M7 21h10M5 7h14M5 7l-3 7a4 4 0 0 0 6 0L5 7Zm14 0-3 7a4 4 0 0 0 6 0l-3-7Z"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6l-8-3Zm-3 9 2 2 4-4"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="m12 3 9 5-9 5-9-5 9-5Zm-9 9 9 5 9-5M3 16l9 5 9-5"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M7 5h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Zm3 5h4v4h-4zM9 2v3m6-3v3M9 19v3m6-3v3M2 9h3m-3 6h3m14-6h3m-3 6h3"/></symbol>
+    <symbol id="i-wifi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 3l18 18M8.5 16.5a5 5 0 0 1 7 0M5 12.5a10 10 0 0 1 5-2.7m4 0a10 10 0 0 1 5 2.7M12 20h.01"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M6 11h12v10H6zM8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3l18 18M10.6 6.1A9.7 9.7 0 0 1 12 6c6.5 0 10 6 10 6a17 17 0 0 1-3 3.6M6.6 6.6A17 17 0 0 0 2 12s3.5 6 10 6a9.6 9.6 0 0 0 4-.9"/></symbol>
+    <symbol id="i-gh" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a11.5 11.5 0 0 0-3.6 22.4c.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0C17.3 4.8 18.3 5.1 18.3 5.1c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.2c0 .3.2.7.8.6A11.5 11.5 0 0 0 12 .5Z"/></symbol>
+  </svg>
+
+  <nav class="nav" aria-label="Navegação">
+    <div class="wrap">
+      <a class="brand" href="#topo"><img src="assets/logo.svg" alt="" /> ARANDU</a>
+      <ul>
+        <li><a href="#para-que-serve">Para que serve</a></li>
+        <li><a href="#como-usar">Como usar</a></li>
+        <li><a href="#privacidade">Privacidade</a></li>
+        <li><a href="#documentacao">Documentação</a></li>
+        <li><a href="#open-source">Open source</a></li>
+        <li><a href="#criador">Criador</a></li>
+      </ul>
+      <a class="ghost mini" href="app/">Acesse o ARANDU</a>
+    </div>
+  </nav>
+
+  <header class="hero" id="topo">
+    <div class="wrap">
+      <div>
+        <span class="pill"><i></i> Gratuito · Código aberto · 100% no seu dispositivo</span>
+        <h1>ARANDU</h1>
+        <p class="slogan">Seus documentos. Menos tokens. Mais inteligência.</p>
+        <p class="lead">Transforme PDFs, documentos do Word, OpenDocument, RTF, TXT e imagens digitalizadas em <strong>Markdown limpo e estruturado</strong>, pronto para ChatGPT, Claude, Gemini e qualquer IA. Com OCR e análise jurídica, sem enviar nada a servidores.</p>
+        <div class="cta-row">
+          <a class="neon" href="app/" aria-label="Acesse o ARANDU aqui">ACESSE O ARANDU AQUI <svg><use href="#i-arrow" /></svg></a>
+          <a class="ghost" href="https://github.com/oliveiracarlosadv/Arandu"><svg width="18" height="18"><use href="#i-gh" /></svg> Ver no GitHub</a>
+        </div>
+        <div class="trust"><span>Sem cadastro</span><span>Sem upload</span><span>Funciona offline</span><span>Instalável como app</span></div>
+      </div>
+      <div class="shot">
+        <img src="assets/app-inicio.jpg" alt="Tela inicial do ARANDU com seletor de modo de conversão e área para arrastar documentos" />
+        <div class="badge"><b>22 tipos</b> de documentos jurídicos reconhecidos, com extração literal</div>
+      </div>
+    </div>
+  </header>
+
+  <section id="para-que-serve">
+    <div class="wrap">
+      <div class="eyebrow">Para que serve</div>
+      <h2>Documentos prontos para a inteligência artificial</h2>
+      <p class="sub">Ao colar um PDF numa IA, você paga (em tokens e em qualidade) por cabeçalhos repetidos, números de página, quebras de linha artificiais e lixo de formatação. O ARANDU entrega só o que importa, organizado.</p>
+      <div class="problem">
+        <div class="card before">
+          <span class="tag">Sem o ARANDU</span>
+          <ul>
+            <li>Cabeçalhos e rodapés repetidos em todas as páginas</li>
+            <li>Palavras hifenizadas e parágrafos quebrados no meio</li>
+            <li>PDFs digitalizados ilegíveis para a IA</li>
+            <li>Tabelas desmontadas e listas sem estrutura</li>
+            <li>Documentos sigilosos enviados a serviços de terceiros</li>
+          </ul>
+        </div>
+        <div class="card after">
+          <span class="tag">Com o ARANDU</span>
+          <ul>
+            <li>Markdown com títulos, listas, tabelas e notas preservados</li>
+            <li>Ruído removido e economia de tokens medida e validada</li>
+            <li>OCR em português nas páginas digitalizadas</li>
+            <li>Dados jurídicos extraídos com referência à página</li>
+            <li>Tudo processado no seu próprio computador ou celular</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="grid g3">
+        <div class="card"><div class="ico"><svg><use href="#i-file" /></svg></div><h3>Muitos formatos</h3><p>PDF (com texto, digitalizado ou híbrido), DOCX, ODT, RTF, TXT, PNG, JPG, WEBP e TIFF multipágina.</p></div>
+        <div class="card"><div class="ico"><svg><use href="#i-scan" /></svg></div><h3>OCR inteligente</h3><p>Detecta páginas sem texto e reconhece em português, com correção de orientação, realce de contraste e três níveis de qualidade.</p></div>
+        <div class="card"><div class="ico"><svg><use href="#i-spark" /></svg></div><h3>Menos tokens</h3><p>Remove o que é ruído e preserva o que é conteúdo. Se algum número de processo, data ou valor se perder, a economia não é contabilizada.</p></div>
+        <div class="card"><div class="ico"><svg><use href="#i-scale" /></svg></div><h3>Inteligência jurídica</h3><p>Reconhece 22 tipos de documentos (petições, sentenças, acórdãos, contratos…) e extrai processo, partes, OAB, pedidos, prazos e dispositivos legais.</p></div>
+        <div class="card"><div class="ico"><svg><use href="#i-layers" /></svg></div><h3>Processamento em lote</h3><p>Envie vários arquivos de uma vez, acompanhe cada etapa real e baixe tudo num ZIP com índice geral.</p></div>
+        <div class="card"><div class="ico"><svg><use href="#i-folder" /></svg></div><h3>Workspace Jurídico</h3><p>Organize por processo, cliente, área e tribunal. Gere índice consolidado e cronologia com citação de arquivo e página.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="alt" id="como-usar">
+    <div class="wrap">
+      <div class="eyebrow">Como usar</div>
+      <h2>Quatro passos, nenhum cadastro</h2>
+      <p class="sub">Funciona em Chrome, Edge, Safari e Firefox, no computador, no tablet e no celular.</p>
+      <div class="grid g4 steps">
+        <div class="card step"><h3>Acesse</h3><p>Clique em <strong>Acesse o ARANDU aqui</strong>. No primeiro acesso, uma apresentação rápida mostra como instalar o ARANDU como aplicativo.</p></div>
+        <div class="card step"><h3>Escolha o modo</h3><p>Fidelidade máxima, Otimizado para IA, Resumo inteligente ou Jurídico estruturado.</p></div>
+        <div class="card step"><h3>Arraste os arquivos</h3><p>Um ou vários. Acompanhe as etapas: leitura, estrutura, OCR, análise, otimização e métricas.</p></div>
+        <div class="card step"><h3>Revise e baixe</h3><p>Compare o texto bruto com o resultado, edite se quiser e baixe em Markdown, TXT, JSON ou ZIP.</p></div>
+      </div>
+      <div class="grid g4 modes">
+        <div class="card"><h3>Fidelidade máxima</h3><p>Preserva conteúdo e estrutura integralmente, apenas normalizando o necessário.</p></div>
+        <div class="card"><h3>Otimizado para IA</h3><p>Remove ruído de formatação, cabeçalhos repetidos e quebras artificiais, sem perder informação.</p></div>
+        <div class="card"><h3>Resumo inteligente</h3><p>Adiciona uma síntese separada, sempre acompanhada do conteúdo integral.</p></div>
+        <div class="card"><h3>Jurídico estruturado</h3><p>Destaca partes, pedidos, fundamentos, decisão, obrigações, prazos e referências legais.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="privacy" id="privacidade">
+    <div class="wrap">
+      <div class="eyebrow">Privacidade</div>
+      <h2>Seus documentos nunca saem do seu dispositivo</h2>
+      <p class="sub">Feito para quem lida com informação sigilosa: advogados, escritórios, empresas e órgãos públicos.</p>
+      <div class="grid g4">
+        <div class="card"><div class="ico"><svg><use href="#i-lock" /></svg></div><h3>Sem upload</h3><p>Leitura, OCR, análise e IA rodam no navegador, em WebAssembly e Web Workers.</p></div>
+        <div class="card"><div class="ico"><svg><use href="#i-eye" /></svg></div><h3>Sem telemetria</h3><p>Nenhum rastreador, nenhum analytics, nenhuma API paga ou externa.</p></div>
+        <div class="card"><div class="ico"><svg><use href="#i-wifi" /></svg></div><h3>Funciona offline</h3><p>Depois de instalado e preparado, o ARANDU funciona sem internet.</p></div>
+        <div class="card"><div class="ico"><svg><use href="#i-shield" /></svg></div><h3>Seguro por padrão</h3><p>Validação de arquivos, proteção contra zip bombs e macros, e conteúdo sanitizado.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="documentacao">
+    <div class="wrap">
+      <div class="eyebrow">Documentação</div>
+      <h2>Como o ARANDU funciona</h2>
+      <p class="sub">Arquitetura híbrida: extração determinística sempre que possível, OCR somente quando necessário, IA local apenas onde agrega valor.</p>
+      <div class="doc-grid">
+        <div>
+          <table>
+            <thead><tr><th>Etapa</th><th>Tecnologia</th></tr></thead>
+            <tbody>
+              <tr><td>PDF: texto nativo e detecção de páginas digitalizadas</td><td>PDF.js</td></tr>
+              <tr><td>DOCX / ODT / RTF / TXT</td><td>Mammoth.js, XML OpenDocument, parser RTF próprio</td></tr>
+              <tr><td>OCR em português</td><td>Tesseract.js (WebAssembly)</td></tr>
+              <tr><td>Reconstrução de layout</td><td>Motor próprio: parágrafos, títulos, listas, tabelas</td></tr>
+              <tr><td>Análise jurídica</td><td>Regras locais + decodificação CNJ com dígito verificador</td></tr>
+              <tr><td>Resumo e verificação (opcional)</td><td>Transformers.js + ONNX Runtime Web (Qwen2.5, Apache-2.0)</td></tr>
+              <tr><td>Estimativa de tokens</td><td>Tokenizer o200k_base (referência)</td></tr>
+              <tr><td>App instalável e offline</td><td>PWA com Service Worker (Workbox)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <details open>
+            <summary>Rodar localmente</summary>
+            <pre>git clone https://github.com/oliveiracarlosadv/Arandu
+cd Arandu
+npm install
+npm run dev      # desenvolvimento
+npm test         # testes automatizados
+npm run build    # build de produção (PWA)</pre>
+          </details>
+          <details>
+            <summary>O que significa "Não identificado no documento."?</summary>
+            <p>A análise jurídica é literal: todo dado exibido é um trecho que existe no documento, com a página de origem. Quando algo não consta, o ARANDU diz isso em vez de inventar.</p>
+          </details>
+          <details>
+            <summary>Como a economia de tokens é calculada?</summary>
+            <p>Comparamos o texto extraído com o Markdown final usando o tokenizer o200k_base. É uma estimativa: cada modelo de IA conta tokens de forma diferente. Se a validação de integridade detectar perda de entidades críticas, a redução não é contabilizada.</p>
+          </details>
+          <details>
+            <summary>Preciso baixar modelos de IA?</summary>
+            <p>Não. Extração, OCR, estruturação e análise jurídica funcionam sem IA. Os modelos de linguagem são opcionais (para resumos) e só são baixados com a sua autorização, mostrando o tamanho antes.</p>
+          </details>
+          <details>
+            <summary>Quais navegadores são suportados?</summary>
+            <p>Chrome, Edge, Safari e Firefox recentes. A IA local é mais rápida com WebGPU (Chrome/Edge, Safari 26+); sem WebGPU, roda na CPU.</p>
+          </details>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="alt" id="open-source">
+    <div class="wrap oss">
+      <div>
+        <div class="eyebrow">Open source</div>
+        <h2>Código aberto, auditável e gratuito</h2>
+        <p class="sub">O ARANDU é distribuído sob a <strong>licença MIT</strong>. Qualquer pessoa pode verificar exatamente o que o aplicativo faz com os documentos, usar, adaptar e contribuir. Sugestões, relatos de problemas e melhorias são bem-vindos.</p>
+      </div>
+      <a class="btn-dark" href="https://github.com/oliveiracarlosadv/Arandu"><svg><use href="#i-gh" /></svg> oliveiracarlosadv/Arandu</a>
+    </div>
+  </section>
+
+  <section id="criador">
+    <div class="wrap">
+      <div class="eyebrow">Sobre o criador</div>
+      <h2>Tradição jurídica e inovação, lado a lado</h2>
+      <div class="creator">
+        <div class="id">
+          <div class="avatar">CA</div>
+          <h3>Carlos Alexandre Albuquerque Oliveira</h3>
+          <p>Advogado · Empreendedor jurídico · Belém do Pará</p>
+          <ul>
+            <li>@oliveiracarlosadv</li>
+            <li><a href="mailto:carlos.0109adv@gmail.com">carlos.0109adv@gmail.com</a></li>
+            <li><a href="tel:+5591986061300">(91) 9 8606-1300</a></li>
+          </ul>
+        </div>
+        <div class="bio">
+          <p>Carlos Alexandre Albuquerque Oliveira é advogado, empreendedor jurídico e pesquisador permanente do Direito, reconhecendo na aprendizagem contínua um dos pilares de sua atuação profissional. Natural de Belém do Pará, alia sólida experiência na advocacia contenciosa à constante busca por inovação e eficiência na prestação de serviços jurídicos.</p>
+          <p>Entre 2020 e 2026, foi sócio-fundador do escritório Sampaio &amp; Oliveira Advogados, onde dirigiu o Setor de Demandas Contenciosas, liderando estratégias processuais, equipes e soluções em diferentes áreas do Direito.</p>
+          <p>Apaixonado por música, tecnologia e conhecimento, dedica parte significativa de sua atuação ao desenvolvimento de soluções tecnológicas para advogados, acreditando que a inovação torna a advocacia mais eficiente, acessível e conectada às necessidades da sociedade contemporânea.</p>
+          <blockquote>“O Direito evolui quando conhecimento, tecnologia e pessoas caminham juntos.”</blockquote>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="final">
+    <div class="wrap">
+      <img src="assets/logo.svg" width="72" height="72" alt="" style="border-radius:20px" />
+      <h2>Pronto para economizar tokens?</h2>
+      <p class="sub">Abra o ARANDU no navegador. Sem cadastro, sem instalação obrigatória, sem enviar seus documentos a ninguém.</p>
+      <a class="neon" href="app/">ACESSE O ARANDU AQUI <svg><use href="#i-arrow" /></svg></a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <span>ARANDU: <em>arandu</em>, do guarani, conhecimento e sabedoria. Licença MIT.</span>
+      <span><a href="https://github.com/oliveiracarlosadv/Arandu">GitHub</a> · <a href="app/">Aplicativo</a> · <a href="app/#/privacidade">Política de privacidade</a></span>
+    </div>
+  </footer>
+</body>
+</html>

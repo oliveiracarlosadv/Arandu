@@ -27,7 +27,11 @@ const cspPlugin = (): Plugin => ({
     html.replace('<meta charset="UTF-8" />', `<meta charset="UTF-8" />\n    <meta http-equiv="Content-Security-Policy" content="${CSP}" />`),
 });
 
+// Caminho base: '/' localmente; no GitHub Pages o app fica em /Arandu/app/ (definido via ARANDU_BASE).
+const base = process.env.ARANDU_BASE ?? '/';
+
 export default defineConfig({
+  base,
   plugins: [
     react(),
     cspPlugin(),
@@ -41,16 +45,16 @@ export default defineConfig({
         short_name: 'ARANDU',
         description: 'Seus documentos. Menos tokens. Mais inteligência. Conversão local de documentos em Markdown otimizado para IA.',
         lang: 'pt-BR',
-        start_url: '/',
-        scope: '/',
+        start_url: base,
+        scope: base,
         display: 'standalone',
         background_color: '#04140f',
         theme_color: '#064e3b',
         categories: ['productivity', 'utilities', 'business'],
         icons: [
-          { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
-          { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
-          { src: '/icons/maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+          { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+          { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png' },
+          { src: 'icons/maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
         ],
       },
       workbox: {
@@ -59,16 +63,16 @@ export default defineConfig({
         globPatterns: ['**/*.{js,mjs,css,html,svg,png,woff2,webmanifest}'],
         globIgnores: ['vendor/**'],
         maximumFileSizeToCacheInBytes: 8 * 1024 * 1024,
-        navigateFallback: '/index.html',
+        navigateFallback: `${base}index.html`,
         cleanupOutdatedCaches: true,
         runtimeCaching: [
           {
-            urlPattern: ({ url }) => url.pathname.startsWith('/vendor/tesseract/'),
+            urlPattern: ({ url }) => url.pathname.startsWith(`${base}vendor/tesseract/`),
             handler: 'CacheFirst',
             options: { cacheName: 'arandu-ocr-v1' },
           },
           {
-            urlPattern: ({ url }) => url.pathname.startsWith('/vendor/ort/'),
+            urlPattern: ({ url }) => url.pathname.startsWith(`${base}vendor/ort/`),
             handler: 'CacheFirst',
             options: { cacheName: 'arandu-ai-runtime-v1' },
           },

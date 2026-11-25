@@ -3,6 +3,7 @@ import { AppLayout } from './layouts/AppLayout';
 import { useRoute } from './hooks/useAppState';
 import { ConsentHost } from './components/Consent';
 import { HomePage } from './pages/HomePage';
+import { Onboarding } from './components/Onboarding';
 
 const ResultPage = lazy(() => import('./pages/ResultPage'));
 const WorkspacePage = lazy(() => import('./pages/WorkspacePage'));
@@ -27,6 +28,7 @@ export function App() {
     <AppLayout route={route}>
       <Suspense fallback={<div className="py-20 text-center text-sm text-ink-500">Carregando…</div>}>{page}</Suspense>
       <ConsentHost />
+      <Onboarding />
     </AppLayout>
   );
 }

@@ -3,7 +3,7 @@
 // para que funcionem offline.
 
 export const OCR_CACHE = 'arandu-ocr-v1';
-export const OCR_BASE = '/vendor/tesseract';
+export const OCR_BASE = `${import.meta.env.BASE_URL}vendor/tesseract`;
 
 export const OCR_ASSETS: { url: string; label: string; approxBytes: number }[] = [
   { url: `${OCR_BASE}/worker.min.js`, label: 'Worker do Tesseract', approxBytes: 111_000 },

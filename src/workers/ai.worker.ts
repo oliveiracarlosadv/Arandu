@@ -9,8 +9,8 @@ env.allowLocalModels = false;
 env.useBrowserCache = true;
 // Runtime ONNX servido pela própria aplicação (sem CDN de terceiros)
 const ortPaths = (suffix: string) => ({
-  mjs: new URL(`/vendor/ort/ort-wasm-simd-threaded${suffix}.mjs`, self.location.origin).href,
-  wasm: new URL(`/vendor/ort/ort-wasm-simd-threaded${suffix}.wasm`, self.location.origin).href,
+  mjs: new URL(`${import.meta.env.BASE_URL}vendor/ort/ort-wasm-simd-threaded${suffix}.mjs`, self.location.origin).href,
+  wasm: new URL(`${import.meta.env.BASE_URL}vendor/ort/ort-wasm-simd-threaded${suffix}.wasm`, self.location.origin).href,
 });
 
 type InMsg =

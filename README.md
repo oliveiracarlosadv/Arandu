@@ -6,6 +6,20 @@
 <p align="center"><strong>Seus documentos. Menos tokens. Mais inteligência.</strong></p>
 <p align="center">Converta PDF, DOCX, ODT, RTF, TXT e imagens em Markdown otimizado para IA — com OCR e análise jurídica, 100% no seu dispositivo.</p>
 
+<p align="center">
+  <a href="https://oliveiracarlosadv.github.io/Arandu/app/"><img src="docs/acesse-o-arandu-aqui.svg" alt="ACESSE O ARANDU AQUI" width="560" /></a>
+</p>
+
+<p align="center">
+  <a href="https://oliveiracarlosadv.github.io/Arandu/">Página do projeto</a> ·
+  <a href="#como-usar">Como usar</a> ·
+  <a href="#desenvolvimento">Documentação</a> ·
+  <a href="#licença">Licença MIT</a> ·
+  <a href="#criador">Criador</a>
+</p>
+
+<p align="center"><img src="site/assets/app-inicio.jpg" alt="Tela inicial do ARANDU" width="760" /></p>
+
 ---
 
 ## O que é
@@ -36,7 +50,7 @@ O **ARANDU** (do guarani, *conhecimento, sabedoria*) é um aplicativo web instal
 
 ## Como usar
 
-1. Abra o ARANDU no navegador (Chrome, Edge, Safari ou Firefox recentes).
+1. Clique em **[ACESSE O ARANDU AQUI](https://oliveiracarlosadv.github.io/Arandu/app/)** (Chrome, Edge, Safari ou Firefox recentes). No primeiro acesso, uma apresentação explica o app e ensina a instalá-lo como aplicativo.
 2. Escolha o **modo de conversão** e, se quiser, ative a **análise jurídica**.
 3. Arraste documentos para a área de upload (ou clique em *Selecionar documentos*).
 4. Acompanhe as etapas reais do processamento; ao final, revise, edite e **baixe** o Markdown, TXT, JSON ou o ZIP do lote.

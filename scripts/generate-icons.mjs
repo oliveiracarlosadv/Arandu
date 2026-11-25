@@ -91,3 +91,39 @@ writeFileSync(join(out, 'apple-touch-icon.png'), draw(180, { maskable: true }));
 writeFileSync(join(pub, 'favicon.svg'), buildSvg());
 writeFileSync(join(pub, 'logo-mark.svg'), buildSvg({ background: false }));
 console.log('[arandu] favicon.svg, logo-mark.svg e ícones PNG gerados');
+
+// Imagem de compartilhamento (Open Graph) 1200×630 para a landing page: fundo verde com brilho
+// e o logotipo ao centro.
+function drawOg(W = 1200, H = 630) {
+  const px = Buffer.alloc(W * H * 4);
+  const S = 340, ox = (W - S) / 2, oy = (H - S) / 2;
+  const ss = 3;
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    let R = 0, G = 0, B = 0;
+    for (let sy = 0; sy < ss; sy++) for (let sx = 0; sx < ss; sx++) {
+      const fx = x + (sx + 0.5) / ss, fy = y + (sy + 0.5) / ss;
+      // fundo: gradiente diagonal escuro + halo esmeralda
+      const t = Math.min(1, Math.max(0, (fx / W + fy / H) / 2));
+      const glow = Math.max(0, 1 - Math.hypot(fx - W / 2, fy - H / 2) / 520) ** 2;
+      let col = [3 + 5 * t + 30 * glow, 42 + 30 * t + 120 * glow, 33 + 20 * t + 80 * glow];
+      const u = ((fx - ox) / S) * 100, v = ((fy - oy) / S) * 100;
+      if (u >= 0 && u <= 100 && v >= 0 && v <= 100 && inBgRoundRect(u, v)) {
+        const tt = Math.min(1, Math.max(0, (u + v) / 200));
+        col = [0, 1, 2].map((i) => c0[i] + (c1[i] - c0[i]) * tt);
+        if (isWhite(u, v)) col = [255, 255, 255];
+      }
+      R += col[0]; G += col[1]; B += col[2];
+    }
+    const n = ss * ss, i = (y * W + x) * 4;
+    px[i] = Math.min(255, R / n); px[i + 1] = Math.min(255, G / n); px[i + 2] = Math.min(255, B / n); px[i + 3] = 255;
+  }
+  // PNG retangular
+  const ihdr = Buffer.alloc(13);
+  ihdr.writeUInt32BE(W, 0); ihdr.writeUInt32BE(H, 4); ihdr[8] = 8; ihdr[9] = 6;
+  const raw = Buffer.alloc((W * 4 + 1) * H);
+  for (let y = 0; y < H; y++) px.copy(raw, y * (W * 4 + 1) + 1, y * W * 4, (y + 1) * W * 4);
+  return Buffer.concat([Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]), chunk('IHDR', ihdr), chunk('IDAT', deflateSync(raw, { level: 9 })), chunk('IEND', Buffer.alloc(0))]);
+}
+mkdirSync(join(pub, '..', 'site', 'assets'), { recursive: true });
+writeFileSync(join(pub, '..', 'site', 'assets', 'og-image.png'), drawOg());
+console.log('[arandu] site/assets/og-image.png gerado');

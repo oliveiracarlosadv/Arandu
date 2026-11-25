@@ -23,7 +23,9 @@ jobs:
         with:
           node-version: 24
           cache: npm
-      - run: npm ci
+      - run: npm ci --no-audit --no-fund
+      - name: Copia OCR e ONNX Runtime para public/vendor
+        run: node scripts/copy-assets.mjs
       - run: npm test
       - name: Build do aplicativo (servido em /Arandu/app/)
         run: npm run build

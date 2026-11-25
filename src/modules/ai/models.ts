@@ -33,7 +33,7 @@ export const MODELS: ModelSpec[] = [
     purpose: 'Experimental: resumos curtos e verificação de classificações duvidosas. A saída passa por uma trava de qualidade; se for inválida, é descartada e o resumo extrativo é usado.',
     hardware: 'Ocupa cerca de 1 GB de memória enquanto ativo e é descarregado após 90 s sem uso. WebGPU recomendado; em CPU (WASM) é mais lento.',
     variants: { webgpu: { dtype: 'q4f16', sizeMb: 483 }, wasm: { dtype: 'q8', sizeMb: 512 } },
-    recommendedFor: ['balanced', 'high'],
+    recommendedFor: [], // não recomendado por padrão: produziu saída corrompida em WebGPU nos testes (25/11/2026)
     contextTokens: 32768,
   },
 ];

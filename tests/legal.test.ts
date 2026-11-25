@@ -55,8 +55,10 @@ describe('Extração jurídica', () => {
   });
   it('marca ausentes como "Não identificado no documento."', () => {
     const md = legalHeaderMarkdown(a);
-    expect(md).toContain(NOT_FOUND); // ex.: comarca/publicação não constam
-    expect(md).toContain('Comarca: ' + NOT_FOUND);
+    // Campos ausentes (ex.: comarca, data de publicação) são agrupados numa única linha explícita
+    const line = md.split('\n').find((l) => l.startsWith(`_${NOT_FOUND.replace(/\.$/, '')}:`)) ?? '';
+    expect(line).toContain('comarca');
+    expect(line).toContain('data de publicação');
   });
   it('nunca inventa: todo valor extraído existe no texto', () => {
     const flat = SENTENCA_TXT.replace(/\s+/g, ' ');

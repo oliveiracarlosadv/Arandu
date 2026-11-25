@@ -191,7 +191,8 @@ export async function processFile(file: File, opts: ProcessOptions, hooks: Pipel
   }
   check(hooks.signal);
   let summary: SummaryResult | undefined;
-  const wantsSummary = opts.mode === 'summary' || (opts.mode === 'legal' && opts.useAi);
+  // No modo jurídico, o resumo só entra quando a IA local está de fato carregada (evita tokens extras).
+  const wantsSummary = opts.mode === 'summary' || (opts.mode === 'legal' && opts.useAi && aiState().status === 'ready');
   if (wantsSummary) {
     if (opts.useAi && aiState().status === 'ready') {
       summary = await aiSummary(plain, doc.blocks, (p, label) => onStep(5, { status: 'running', detail: label, progress: p }));
@@ -213,17 +214,17 @@ export async function processFile(file: File, opts: ProcessOptions, hooks: Pipel
   const title = doc.title && doc.title.length < 120 ? doc.title : file.name.replace(/\.[^.]+$/, '');
   const parts: string[] = [`# ${title}`];
   parts.push(
-    opts.mode === 'ai'
+    opts.mode === 'ai' || opts.mode === 'legal'
       ? `> Fonte: ${file.name} · ${doc.pageCount} p. · ${documentType}`
       : `> Fonte: ${file.name} · ${doc.pageCount} página(s) · ${documentType} · extração: ${methodLabel(doc.method)} · processado localmente pelo ARANDU`,
   );
   if (opts.mode === 'legal' && legal) {
     parts.push(legalHeaderMarkdown(legal));
     if (summary) parts.push(summaryMarkdown(summary, 2));
-    parts.push(`## ${summary ? 3 : 2}. Conteúdo original extraído\n\n> Texto do documento, apenas reorganizado e normalizado. Nenhuma informação foi acrescentada.`, body);
+    parts.push(`## ${summary ? 3 : 2}. Conteúdo original extraído\n\n> Texto do documento, só reorganizado e normalizado.`, body);
   } else if (opts.mode === 'summary' && summary) {
     parts.push(summaryMarkdown(summary, 1));
-    parts.push('## 2. Conteúdo original extraído\n\n> Conteúdo integral (otimizado), preservado abaixo do resumo.', body);
+    parts.push('## 2. Conteúdo original extraído\n\n> Conteúdo integral (otimizado).', body);
   } else {
     parts.push(body);
   }

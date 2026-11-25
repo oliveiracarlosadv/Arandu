@@ -65,6 +65,7 @@
         "@id": "https://oliveiracarlosadv.github.io/Arandu/#criador",
         "name": "Carlos Alexandre Albuquerque Oliveira",
         "jobTitle": "Advogado",
+        "image": "https://oliveiracarlosadv.github.io/Arandu/assets/criador.jpg",
         "homeLocation": { "@type": "Place", "name": "Belém, Pará, Brasil" },
         "sameAs": ["https://github.com/oliveiracarlosadv"]
       },
@@ -188,10 +189,11 @@
     .btn-dark { display: inline-flex; align-items: center; gap: 10px; padding: 14px 22px; border-radius: 14px; background: var(--ink); color: #fff; text-decoration: none; font-weight: 600; }
     .btn-dark svg { width: 20px; height: 20px; }
 
-    .creator { display: grid; grid-template-columns: 280px 1fr; gap: 40px; align-items: start; margin-top: 44px; }
+    .creator { display: grid; grid-template-columns: 320px 1fr; gap: 40px; align-items: start; margin-top: 44px; }
     @media (max-width: 820px) { .creator { grid-template-columns: 1fr; } }
     .creator .id { border-radius: var(--radius); padding: 30px; background: linear-gradient(160deg, var(--g900), var(--g700)); color: #fff; text-align: center; }
     .avatar { width: 96px; height: 96px; margin: 0 auto 16px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.12); border: 2px solid rgba(255,255,255,.3); font-size: 34px; font-weight: 700; letter-spacing: .02em; }
+    .photo { display: block; width: 100%; height: auto; aspect-ratio: 458 / 360; object-fit: cover; border-radius: 14px; margin: 0 0 18px; border: 2px solid rgba(255,255,255,.22); box-shadow: 0 16px 30px -14px rgba(0,0,0,.5); }
     .creator .id h3 { margin: 0; font-size: 19px; }
     .creator .id p { margin: 6px 0 0; color: var(--g100); font-size: 14px; }
     .creator .id ul { list-style: none; padding: 0; margin: 20px 0 0; font-size: 14px; text-align: left; }
@@ -402,7 +404,7 @@ npm run build    # build de produção (PWA)</pre>
       <h2>Tradição jurídica e inovação, lado a lado</h2>
       <div class="creator">
         <div class="id">
-          <div class="avatar">CA</div>
+          <img class="photo" src="assets/criador.jpg" width="458" height="360" alt="Carlos Alexandre Albuquerque Oliveira, de beca, falando ao microfone em um tribunal" loading="lazy" />
           <h3>Carlos Alexandre Albuquerque Oliveira</h3>
           <p>Advogado · Empreendedor jurídico · Belém do Pará</p>
           <ul>

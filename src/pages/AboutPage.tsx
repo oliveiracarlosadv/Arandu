@@ -36,8 +36,19 @@ export default function AboutPage() {
 
       <section className="card mt-4 px-6 py-6 sm:px-10">
         <div className="label">Idealizador</div>
-        <h2 className="mt-1 text-lg font-semibold text-ink-950 dark:text-white">Carlos Alexandre Albuquerque Oliveira</h2>
-        <p className="text-[13px] text-ink-500">Advogado · Empreendedor jurídico · Belém do Pará</p>
+        <div className="mt-3 flex items-center gap-4">
+          <img
+            src={`${import.meta.env.BASE_URL}criador-avatar.jpg`}
+            width={80}
+            height={80}
+            alt="Carlos Alexandre Albuquerque Oliveira"
+            className="h-20 w-20 shrink-0 rounded-full object-cover ring-2 ring-brand-500/40"
+          />
+          <div>
+            <h2 className="text-lg font-semibold text-ink-950 dark:text-white">Carlos Alexandre Albuquerque Oliveira</h2>
+            <p className="text-[13px] text-ink-500">Advogado · Empreendedor jurídico · Belém do Pará</p>
+          </div>
+        </div>
         <div className="mt-4 space-y-3 text-[14px] leading-relaxed text-ink-700 dark:text-ink-300">
           {BIO.map((p, i) => <p key={i}>{p}</p>)}
         </div>

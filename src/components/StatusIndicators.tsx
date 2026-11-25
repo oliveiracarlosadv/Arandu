@@ -39,7 +39,7 @@ export function StatusIndicators() {
         ? { tone: 'busy' as const, label: 'Carregando IA local', detail: ai.totalMb ? `${ai.loadedMb}/${ai.totalMb} MB · ${ai.progress ?? 0}%` : 'Preparando…' }
         : ai.status === 'error'
           ? { tone: 'warn' as const, label: 'IA local com erro', detail: ai.error ?? 'Verifique a Central de Modelos' }
-          : { tone: 'off' as const, label: 'IA local inativa', detail: s.defaultModelId ? 'Modelo instalado — ativar na Central' : 'Opcional · nenhum modelo baixado' };
+          : { tone: 'off' as const, label: 'IA local desligada', detail: ai.autoUnloaded ? 'Liberada da memória após inatividade' : 'Opcional · não é necessária' };
 
   const ocrPill = ocr.ready
     ? { tone: 'ok' as const, label: 'OCR disponível offline', detail: 'Tesseract.js · português' }

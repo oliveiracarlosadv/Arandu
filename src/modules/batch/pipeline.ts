@@ -56,6 +56,8 @@ async function extractImage(file: File, format: SourceFormat, opts: ProcessOptio
     check(hooks.signal);
     hooks.onStep(4, { status: 'running', detail: `Página ${i + 1} de ${canvases.length}`, progress: i / canvases.length });
     const r = await ocrCanvas(canvases[i], opts.ocrQuality, (p) => hooks.onStep(4, { status: 'running', detail: `Página ${i + 1} de ${canvases.length} — ${Math.round(p * 100)}%`, progress: (i + p) / canvases.length }), hooks.signal);
+    canvases[i].width = 0; // libera a imagem decodificada assim que o OCR termina
+    canvases[i].height = 0;
     const layout: PageLayout = { page: i + 1, width: r.width, height: r.height, lines: buildLines(r.items) };
     blocks.push({ kind: 'pagebreak', page: i + 1 }, ...linesToBlocks(layout, { marginals: new Set(), bodyHeight: 0, keepMarginals: true, seenMarginals: new Set() }).blocks);
     raw.push(pageRawText(layout));
@@ -248,6 +250,7 @@ export async function processFile(file: File, opts: ProcessOptions, hooks: Pipel
 
   onStep(8, { status: 'running' });
   const warnings = [...doc.warnings];
+  if (summary?.note) warnings.push(summary.note);
   if (!integrity.ok) warnings.push(`Validação de integridade: ${integrity.missing.length} entidade(s) do original não encontrada(s) no resultado. A redução de tokens não foi contabilizada como ganho.`);
   const result: ProcessResult = {
     id: uid(),

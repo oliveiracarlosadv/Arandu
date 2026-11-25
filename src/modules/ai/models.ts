@@ -1,4 +1,7 @@
-// Catálogo da Central de Modelos. Apenas modelos com licença permissiva (Apache-2.0),
+// Catálogo da Central de Modelos. A IA generativa é OPCIONAL e EXPERIMENTAL no ARANDU: o núcleo
+// (extração, OCR, análise jurídica, otimização) não depende dela. Para não pesar no computador,
+// o catálogo traz apenas o menor modelo útil em português; modelos maiores foram retirados.
+// Apenas modelos com licença permissiva (Apache-2.0),
 // em formato ONNX quantizado, executáveis no navegador via Transformers.js (WebGPU ou WASM).
 // Tamanhos aferidos nos arquivos publicados no Hugging Face (podem mudar com novas revisões).
 
@@ -27,23 +30,10 @@ export const MODELS: ModelSpec[] = [
     parameters: '0,5 bilhão',
     license: 'Apache-2.0',
     languages: 'Multilíngue (29+ idiomas, inclui português)',
-    purpose: 'Resumos curtos e apoio à classificação. Leve e rápido; qualidade limitada em textos longos.',
-    hardware: '≈ 2 GB de RAM livre. WebGPU recomendado; funciona em CPU (WASM), mais lento.',
+    purpose: 'Experimental: resumos curtos e verificação de classificações duvidosas. A saída passa por uma trava de qualidade; se for inválida, é descartada e o resumo extrativo é usado.',
+    hardware: 'Ocupa cerca de 1 GB de memória enquanto ativo e é descarregado após 90 s sem uso. WebGPU recomendado; em CPU (WASM) é mais lento.',
     variants: { webgpu: { dtype: 'q4f16', sizeMb: 483 }, wasm: { dtype: 'q8', sizeMb: 512 } },
-    recommendedFor: ['economy', 'balanced'],
-    contextTokens: 32768,
-  },
-  {
-    id: 'onnx-community/Qwen2.5-1.5B-Instruct',
-    name: 'Qwen2.5 1.5B Instruct',
-    developer: 'Alibaba Cloud (Qwen) — conversão ONNX: onnx-community',
-    parameters: '1,5 bilhão',
-    license: 'Apache-2.0',
-    languages: 'Multilíngue (29+ idiomas, inclui português)',
-    purpose: 'Resumos de maior qualidade e verificação de classificação jurídica.',
-    hardware: '≈ 4 GB de RAM livre e WebGPU recomendados. Em CPU (WASM) é lento.',
-    variants: { webgpu: { dtype: 'q4f16', sizeMb: 1222 }, wasm: { dtype: 'q8', sizeMb: 1579 } },
-    recommendedFor: ['high'],
+    recommendedFor: ['balanced', 'high'],
     contextTokens: 32768,
   },
 ];

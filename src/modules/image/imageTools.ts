@@ -61,7 +61,7 @@ async function decodeTiff(buf: ArrayBuffer): Promise<Canvas2D[]> {
 
 /** Escala-alvo do lado maior conforme a qualidade de OCR. */
 export function targetLongSide(q: OcrQuality): number {
-  return q === 'fast' ? 1800 : q === 'balanced' ? 2600 : 3400;
+  return q === 'fast' ? 1800 : q === 'balanced' ? 2600 : 3000;
 }
 
 /**

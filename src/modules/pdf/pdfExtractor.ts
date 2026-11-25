@@ -27,7 +27,7 @@ export interface PdfHooks {
   ocrQuality: OcrQuality;
 }
 
-const OCR_RENDER_SCALE: Record<OcrQuality, number> = { fast: 1.6, balanced: 2.2, high: 3 };
+const OCR_RENDER_SCALE: Record<OcrQuality, number> = { fast: 1.6, balanced: 2.2, high: 2.6 };
 
 function aborted(signal?: AbortSignal) {
   if (signal?.aborted) throw new DOMException('Processamento cancelado', 'AbortError');
@@ -117,6 +117,8 @@ export async function extractPdf(data: ArrayBuffer, hooks: PdfHooks): Promise<Ex
           await page.render({ canvas: canvas as HTMLCanvasElement, canvasContext: ctx as CanvasRenderingContext2D, viewport: vp }).promise;
           page.cleanup();
           const r = await hooks.ocrPage(canvas, ocrDone, ocrQueue.length);
+          canvas.width = 0; // libera a memória da página renderizada
+          canvas.height = 0;
           layouts[n - 1] = { page: n, width: r.width, height: r.height, lines: buildLines(r.items) };
           pages[n - 1] = { number: n, method: 'ocr', ocrConfidence: Math.round(r.confidence), rotation: r.rotation };
           if (r.confidence < 60) warnings.push(`Página ${n}: OCR com baixa confiança (${Math.round(r.confidence)}%). Revise o resultado.`);

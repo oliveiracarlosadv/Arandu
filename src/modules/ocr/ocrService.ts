@@ -17,9 +17,17 @@ export interface OcrPageResult {
 }
 
 let workerPromise: Promise<TWorker> | null = null;
+/** O worker do OCR (~100–200 MB) é encerrado após este tempo ocioso, liberando memória. */
+const OCR_IDLE_MS = 60_000;
+let idleTimer: ReturnType<typeof setTimeout> | null = null;
+function scheduleIdle() {
+  if (idleTimer) clearTimeout(idleTimer);
+  idleTimer = setTimeout(() => void terminateOcr(), OCR_IDLE_MS);
+}
 let currentProgress: ((p: number) => void) | null = null;
 
 async function getWorker(): Promise<TWorker> {
+  if (idleTimer) clearTimeout(idleTimer);
   if (!workerPromise) {
     workerPromise = (async () => {
       const { createWorker, OEM } = await import('tesseract.js');
@@ -44,11 +52,18 @@ async function getWorker(): Promise<TWorker> {
 }
 
 export async function terminateOcr(): Promise<void> {
+  if (idleTimer) clearTimeout(idleTimer);
+  idleTimer = null;
   if (workerPromise) {
     const w = await workerPromise.catch(() => null);
     workerPromise = null;
     await w?.terminate();
   }
+}
+
+/** Zera as dimensões do canvas para o navegador liberar a memória da imagem imediatamente. */
+export function releaseCanvas(c: Canvas2D) {
+  try { c.width = 0; c.height = 0; } catch { /* ignore */ }
 }
 
 async function toBlob(c: Canvas2D): Promise<Blob> {
@@ -63,11 +78,13 @@ async function detectRotation(worker: TWorker, img: Canvas2D): Promise<0 | 90 | 
   for (const rot of [0, 90, 180, 270] as const) {
     const c = rot === 0 ? small : rotateCanvas(small, rot);
     const { data } = await worker.recognize(await toBlob(c));
+    if (c !== small) releaseCanvas(c);
     const words = data.text.match(/[A-Za-zÀ-ÿ]{3,}/g)?.length ?? 0;
     const score = data.confidence * Math.log2(2 + words);
     if (score > best.conf) best = { rot, conf: score };
     if (rot === 0 && data.confidence > 70 && words > 15) break; // orientação normal com boa confiança
   }
+  if (small !== img) releaseCanvas(small);
   return best.rot;
 }
 
@@ -85,7 +102,11 @@ export async function ocrCanvas(
   let rotation: 0 | 90 | 180 | 270 = 0;
   if (quality !== 'fast') {
     rotation = await detectRotation(worker, img);
-    if (rotation) img = rotateCanvas(img, rotation);
+    if (rotation) {
+      const rotated = rotateCanvas(img, rotation);
+      releaseCanvas(img);
+      img = rotated;
+    }
   }
   if (signal?.aborted) throw new DOMException('Cancelado', 'AbortError');
 
@@ -113,5 +134,8 @@ export async function ocrCanvas(
       }
     }
   }
-  return { items, width: img.width, height: img.height, confidence: data.confidence, rotation, text: data.text };
+  const result = { items, width: img.width, height: img.height, confidence: data.confidence, rotation, text: data.text };
+  releaseCanvas(img);
+  scheduleIdle();
+  return result;
 }

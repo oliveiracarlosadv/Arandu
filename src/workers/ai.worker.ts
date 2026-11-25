@@ -50,6 +50,7 @@ self.onmessage = async (ev: MessageEvent<InMsg>) => {
       post({ type: 'ready', modelId: msg.modelId });
     } else if (msg.type === 'generate') {
       if (!generator) throw new Error('Nenhum modelo carregado.');
+      // Classificação: resposta curtíssima; resumo: limitado. Evita uso prolongado da GPU/CPU.
       let produced = 0;
       const streamer = new TextStreamer(generator.tokenizer, {
         skip_prompt: true,

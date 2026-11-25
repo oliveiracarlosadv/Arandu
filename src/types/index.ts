@@ -114,6 +114,8 @@ export interface SummaryResult {
   text: string;
   method: 'ia-local' | 'extrativo';
   model?: string;
+  /** Observação exibida ao usuário (ex.: saída da IA descartada pela trava de qualidade). */
+  note?: string;
 }
 
 export interface ProcessResult {

@@ -122,11 +122,14 @@ export default function ModelsPage() {
 
       {err && <p className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-700 dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-300">Erro: {err}</p>}
 
-      <h2 className="mt-8 mb-3 text-sm font-semibold">Modelos de linguagem (opcionais)</h2>
-      <p className="mb-4 text-[13px] text-ink-500">
-        A IA é usada apenas para resumos e para verificar classificações duvidosas. Extração, OCR, estruturação e otimização funcionam sem IA.
-        Os modelos são baixados do Hugging Face (somente os arquivos do modelo — nenhum documento é enviado) e ficam no cache do navegador.
-      </p>
+      <h2 className="mt-8 mb-3 flex items-center gap-2 text-sm font-semibold">Modelo de linguagem <Badge tone="warn">Experimental · opcional</Badge></h2>
+      <div className="mb-4 rounded-xl border border-ink-200 bg-white px-4 py-3 text-[13px] text-ink-600 dark:border-white/[0.07] dark:bg-white/[0.02] dark:text-ink-300">
+        <p><strong>Você não precisa de IA para usar o ARANDU.</strong> Extração, OCR, análise jurídica e otimização funcionam sem ela e são leves.</p>
+        <p className="mt-1.5">A IA local serve apenas para resumos e para verificar classificações duvidosas. Para não deixar o computador lento, ela só fica na memória enquanto estiver em uso e é <strong>descarregada automaticamente após 90 segundos</strong> sem uso. Os arquivos do modelo vêm do Hugging Face (nenhum documento é enviado).</p>
+        {hw && ((hw.deviceMemoryGb !== null && hw.deviceMemoryGb < 8) || !hw.webgpu) && (
+          <p className="mt-1.5 text-amber-700 dark:text-amber-300">Neste dispositivo ({hw.deviceMemoryGb !== null ? `≈ ${hw.deviceMemoryGb} GB de RAM` : 'RAM não informada'}{hw.webgpu ? '' : ', sem WebGPU'}), recomendamos não ativar a IA: o resumo extrativo é instantâneo e não pesa.</p>
+        )}
+      </div>
       <div className="grid gap-3 lg:grid-cols-2">
         {MODELS.map((m) => {
           const c = cache[m.id];
@@ -158,6 +161,14 @@ export default function ModelsPage() {
               </div>
               <p className="mt-3 text-[12.5px] text-ink-600 dark:text-ink-300"><strong>Finalidade:</strong> {m.purpose}</p>
               <p className="mt-1 text-[12.5px] text-ink-600 dark:text-ink-300"><strong>Requisitos:</strong> {m.hardware}</p>
+              {isActive && ai.persisted === false && (
+                <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-[12px] text-amber-800 dark:bg-amber-500/10 dark:text-amber-200">
+                  O navegador não guardou o arquivo do modelo no cache (limite de armazenamento). Ele funciona agora, mas será baixado de novo na próxima ativação e não estará disponível offline.
+                </p>
+              )}
+              {!isActive && !isLoading && ai.autoUnloaded && s.defaultModelId === m.id && (
+                <p className="mt-3 text-[12px] text-ink-500">Descarregado automaticamente para liberar memória. Clique em Ativar para usar de novo.</p>
+              )}
               {isLoading && (
                 <div className="mt-3">
                   <ProgressBar value={(ai.progress ?? 0) / 100} indeterminate={!ai.totalMb} />

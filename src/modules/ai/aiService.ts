@@ -4,8 +4,11 @@ import type { Block, SummaryResult } from '../../types';
 import { findModel, type Backend, type ModelSpec } from './models';
 import { extractiveSummary } from './extractiveSummary';
 import { LEGAL_TYPES } from '../legal/classifier';
+import { validateGeneratedText } from './quality';
 
 const HF_CACHE = 'transformers-cache';
+/** Libera o modelo da memória após este tempo sem uso (o modelo ocupa ~1 GB enquanto carregado). */
+export const AI_IDLE_UNLOAD_MS = 90_000;
 
 type Listener = (s: AiState) => void;
 
@@ -17,6 +20,29 @@ export interface AiState {
   loadedMb?: number;
   totalMb?: number;
   error?: string;
+  /** false quando o navegador não guardou o arquivo do modelo no cache (será baixado de novo). */
+  persisted?: boolean;
+  /** true quando o modelo foi descarregado automaticamente para liberar memória. */
+  autoUnloaded?: boolean;
+}
+
+let idleTimer: ReturnType<typeof setTimeout> | null = null;
+function scheduleIdleUnload() {
+  if (idleTimer) clearTimeout(idleTimer);
+  idleTimer = setTimeout(() => {
+    if (state.status === 'ready') releaseWorker(true);
+  }, AI_IDLE_UNLOAD_MS);
+}
+
+/** Encerra o worker inteiro: libera toda a memória (WASM, GPU) usada pelo modelo. */
+function releaseWorker(auto: boolean) {
+  if (idleTimer) clearTimeout(idleTimer);
+  idleTimer = null;
+  worker?.terminate();
+  worker = null;
+  pending.forEach((p) => p.reject(new Error('Modelo descarregado.')));
+  pending.clear();
+  setState({ status: 'idle', modelId: undefined, progress: undefined, autoUnloaded: auto });
 }
 
 let worker: Worker | null = null;
@@ -47,15 +73,18 @@ function getWorker(): Worker {
         setState({ progress: Math.round(m.progress ?? 0), loadedMb: Math.round(m.loaded / 1048576), totalMb: Math.round(m.total / 1048576) });
       }
     } else if (m.type === 'ready') {
-      setState({ status: 'ready', progress: 100 });
+      setState({ status: 'ready', progress: 100, autoUnloaded: false });
       loadWaiter?.resolve();
       loadWaiter = null;
+      scheduleIdleUnload();
+      if (state.modelId) void isModelCached(state.modelId).then((persisted) => setState({ persisted }));
     } else if (m.type === 'token') {
       pending.get(m.id)?.onToken?.(m.produced, m.max);
     } else if (m.type === 'result') {
       pending.get(m.id)?.resolve(m.text);
       pending.delete(m.id);
       setState({ status: 'ready' });
+      scheduleIdleUnload();
     } else if (m.type === 'unloaded') {
       setState({ status: 'idle', modelId: undefined, progress: undefined });
     } else if (m.type === 'error') {
@@ -84,7 +113,9 @@ export function chooseBackend(webgpu: boolean): Backend {
 }
 
 /** Carrega (e, se necessário, baixa) o modelo. Só deve ser chamado após autorização do usuário. */
-export function loadModel(spec: ModelSpec, backend: Backend, webgpuF16 = true): Promise<void> {
+export async function loadModel(spec: ModelSpec, backend: Backend, webgpuF16 = true): Promise<void> {
+  // Pede armazenamento persistente para o navegador não descartar o modelo (ou recusar o cache).
+  try { await navigator.storage?.persist?.(); } catch { /* opcional */ }
   let { dtype } = spec.variants[backend];
   if (backend === 'webgpu' && dtype === 'q4f16' && !webgpuF16) dtype = 'q4';
   setState({ status: 'loading', modelId: spec.id, backend, progress: 0, error: undefined });
@@ -95,11 +126,12 @@ export function loadModel(spec: ModelSpec, backend: Backend, webgpuF16 = true): 
 }
 
 export function unloadModel() {
-  worker?.postMessage({ type: 'unload' });
+  releaseWorker(false);
 }
 
 export function generate(messages: { role: string; content: string }[], maxNewTokens: number, onToken?: (n: number, max: number) => void): Promise<string> {
   if (state.status !== 'ready' && state.status !== 'generating') return Promise.reject(new Error('Modelo de IA não carregado.'));
+  if (idleTimer) clearTimeout(idleTimer);
   const id = ++seq;
   setState({ status: 'generating' });
   return new Promise((resolve, reject) => {
@@ -184,6 +216,8 @@ export async function aiSummary(fullText: string, blocks: Block[], onProgress?: 
       ],
       220,
     );
+    const q = validateGeneratedText(r);
+    if (!q.ok) return rejected(blocks, spec.name, q.reason);
     partials.push(r.trim());
   }
   let text = partials[0] ?? '';
@@ -197,8 +231,19 @@ export async function aiSummary(fullText: string, blocks: Block[], onProgress?: 
       380,
     );
   }
+  const q = validateGeneratedText(text);
+  if (!q.ok) return rejected(blocks, spec.name, q.reason);
   onProgress?.(1, 'Resumo concluído');
   return { text: text.trim(), method: 'ia-local', model: spec.name };
+}
+
+/** Saída da IA reprovada na trava de qualidade: usa o resumo extrativo e registra o motivo. */
+function rejected(blocks: Block[], model: string, reason?: string): SummaryResult {
+  return {
+    text: extractiveSummary(blocks),
+    method: 'extrativo',
+    note: `A IA local (${model}) produziu um texto inválido (${reason ?? 'qualidade insuficiente'}), que foi descartado. Foi usado o resumo extrativo, com frases literais do documento.`,
+  };
 }
 
 /** Verificação de classificação: a IA só pode escolher entre os candidatos das regras. */

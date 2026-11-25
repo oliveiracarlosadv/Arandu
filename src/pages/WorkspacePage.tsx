@@ -7,7 +7,7 @@ import { navigate } from '../hooks/useAppState';
 import { enqueue, useJobs } from '../modules/batch/queue';
 import { downloadMarkdown } from '../modules/batch/exporters';
 import {
-  addDocToCase, AREAS, buildChronology, caseIndexMarkdown, deleteCase, exportCaseZip, listCases, listDocs, removeDoc, saveCase,
+  addDocToCase, AREAS, buildChronology, caseIndexMarkdown, deleteCase, docDateLabel, exportCaseZip, fileNames, listCases, listDocs, removeDoc, saveCase,
   type LegalCase, type WorkspaceDoc,
 } from '../modules/workspace/workspace';
 import { fmtDate } from '../utils/format';
@@ -97,6 +97,7 @@ function CaseDetail({ caseId }: { caseId: string }) {
   const [view, setView] = useState<{ title: string; md: string } | null>(null);
   const [editing, setEditing] = useState(false);
   const pending = useRef(new Set<string>());
+  const [mine, setMine] = useState<Set<string>>(new Set()); // trabalhos enviados nesta página
   const jobs = useJobs();
 
   const load = useCallback(async () => {
@@ -115,7 +116,7 @@ function CaseDetail({ caseId }: { caseId: string }) {
     }
   }, [jobs, caseId, load]);
 
-  const names = useMemo(() => docs.map((d, i) => `${String(i + 1).padStart(2, '0')} - ${d.displayName}.md`), [docs]);
+  const names = useMemo(() => fileNames(docs), [docs]);
   if (c === undefined) return <p className="py-20 text-center text-sm text-ink-500">Carregando…</p>;
   if (!c) return <p className="py-20 text-center text-sm text-ink-500">Processo não encontrado. <a className="underline" href="#/workspace">Voltar</a></p>;
   const types = [...new Set(docs.map((d) => d.documentType))];
@@ -148,7 +149,7 @@ function CaseDetail({ caseId }: { caseId: string }) {
             <Icon name="file" size={15} className="text-ink-400" />
             <div className="min-w-0 flex-1">
               <div className="truncate font-medium text-ink-950 dark:text-white">{d.displayName}</div>
-              <div className="truncate text-[11.5px] text-ink-500">{d.result.fileName} · {d.documentDate ?? 'data não identificada'}{d.tribunal ? ` · ${d.tribunal}` : ''}</div>
+              <div className="truncate text-[11.5px] text-ink-500">{d.result.fileName} · {d.documentDateTs !== undefined || d.documentDate ? docDateLabel(d) : 'data não identificada'}{d.tribunal ? ` · ${d.tribunal}` : ''}</div>
             </div>
             <Badge>{d.documentType}</Badge>
             <span className="text-[11.5px] text-ink-400">adicionado {fmtDate(d.addedAt)}</span>
@@ -163,8 +164,14 @@ function CaseDetail({ caseId }: { caseId: string }) {
 
       <div className="mt-6">
         <div className="label mb-2">Processar e adicionar documentos a este processo</div>
-        <DropZone onFiles={(files) => enqueue(files).forEach((id) => pending.current.add(id))} />
-        <JobList />
+        <DropZone
+          onFiles={(files) => {
+            const ids = enqueue(files);
+            ids.forEach((id) => pending.current.add(id));
+            setMine((m) => new Set([...m, ...ids]));
+          }}
+        />
+        <JobList onlyIds={mine} />
       </div>
 
       <div className="mt-10 flex justify-end">
@@ -174,7 +181,7 @@ function CaseDetail({ caseId }: { caseId: string }) {
       </div>
 
       <Modal open={!!view} onClose={() => setView(null)} title={view?.title ?? ''} footer={<Button onClick={() => setView(null)}>Fechar</Button>}>
-        <div className="scroll-thin max-h-[65vh] overflow-auto pr-1"><MarkdownPreview markdown={view?.md ?? ''} /></div>
+        <div className="scroll-thin max-h-[65vh] overflow-auto pr-1"><MarkdownPreview markdown={(view?.md ?? '').replace(/^# .*\n+/, '')} /></div>
       </Modal>
       <Modal open={editing} onClose={() => setEditing(false)} title="Editar processo">
         <CaseForm initial={c} onCancel={() => setEditing(false)} onSave={() => { setEditing(false); void load(); }} />

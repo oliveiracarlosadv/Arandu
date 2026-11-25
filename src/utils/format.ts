@@ -18,6 +18,11 @@ export function fmtDuration(ms: number): string {
 
 export const fmtDate = (t: number) => new Date(t).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
 
+/** Nome seguro para arquivo, sem tratar pontos como extensão (ex.: números de processo CNJ). */
+export function safeFileName(name: string): string {
+  return name.replace(/[\\/:*?"<>|]+/g, '_').replace(/\s+/g, ' ').trim().slice(0, 120) || 'documento';
+}
+
 /** Nome de arquivo seguro preservando o nome original (troca só a extensão). */
 export function outputName(original: string, ext: string): string {
   const base = original.replace(/\.[^.]+$/, '').replace(/[\\/:*?"<>|]+/g, '_').trim() || 'documento';

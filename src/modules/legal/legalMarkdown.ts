@@ -28,36 +28,31 @@ export function legalHeaderMarkdown(a: LegalAnalysis): string {
       `- Data de publicação: ${one(a.publicationDate)}`,
     ].join('\n'),
   );
-  L.push('### Partes');
-  L.push(a.parties.length ? a.parties.map((p) => `- ${p.role}: ${p.name}${p.page ? ` _(p. ${p.page})_` : ''}`).join('\n') : `- ${NOT_FOUND}`);
-  L.push('### Advogados');
-  L.push(a.lawyers.length ? a.lawyers.map((l) => `- ${l.name ?? 'Nome não identificado'} \u2014 ${l.oab}${l.page ? ` _(p. ${l.page})_` : ''}`).join('\n') : `- ${NOT_FOUND}`);
 
   const isDecision = /Senten|Acórd|Decisão/.test(a.documentType);
-  L.push('### Pedidos formulados');
-  L.push('> Pedidos são requerimentos/alegações da parte \u2014 não constituem decisão judicial.');
-  L.push(list(a.requests, 40));
-  L.push('### Fundamentos jurídicos (títulos das seções)');
-  L.push(list(a.legalGrounds));
-  L.push('### Dispositivos legais citados');
-  L.push(list(a.statutes, 60));
-  L.push('### Jurisprudência e precedentes citados');
-  L.push(list(a.caseLaw, 40));
-  L.push('### Valores mencionados');
-  L.push(list(a.monetaryValues, 25));
-  L.push('### Obrigações estabelecidas');
-  L.push(list(a.obligations, 15));
-  L.push('### Prazos expressamente indicados');
-  L.push(list(a.deadlines, 15));
-  if (isDecision) {
-    L.push('### Resultado da decisão (trechos do dispositivo)');
-    L.push(list(a.decisionResult, 8));
+  // Seções com conteúdo são listadas; as vazias são agrupadas numa única linha (economiza tokens
+  // sem omitir a informação de que não constam do documento).
+  const sections: { title: string; items: Evidence[]; note?: string; max?: number }[] = [
+    { title: 'Partes', items: a.parties.map((p) => ({ value: `${p.role}: ${p.name}`, page: p.page })) },
+    { title: 'Advogados', items: a.lawyers.map((l) => ({ value: `${l.name ?? 'Nome não identificado'} \u2014 ${l.oab}`, page: l.page })) },
+    { title: 'Pedidos formulados', items: a.requests, note: 'Pedidos são requerimentos/alegações da parte \u2014 não constituem decisão judicial.', max: 40 },
+    { title: 'Fundamentos jurídicos (títulos das seções)', items: a.legalGrounds },
+    { title: 'Dispositivos legais citados', items: a.statutes, max: 60 },
+    { title: 'Jurisprudência e precedentes citados', items: a.caseLaw, max: 40 },
+    { title: 'Valores mencionados', items: a.monetaryValues, max: 25 },
+    { title: 'Obrigações estabelecidas', items: a.obligations, max: 15 },
+    { title: 'Prazos expressamente indicados', items: a.deadlines, max: 15 },
+    ...(isDecision ? [{ title: 'Resultado da decisão (trechos do dispositivo)', items: a.decisionResult, max: 8 }] : []),
+    ...(a.signatures.length ? [{ title: 'Elementos visuais de assinatura', items: a.signatures, note: 'Indicados apenas como elementos visuais; a autoria não é atribuída automaticamente.', max: 10 }] : []),
+  ];
+  const empty: string[] = [];
+  for (const sec of sections) {
+    if (!sec.items.length) { empty.push(sec.title.replace(/ \(.*\)$/, '').toLowerCase()); continue; }
+    L.push(`### ${sec.title}`);
+    if (sec.note) L.push(`> ${sec.note}`);
+    L.push(list(sec.items, sec.max ?? 30));
   }
-  if (a.signatures.length) {
-    L.push('### Elementos visuais de assinatura');
-    L.push('> Indicados apenas como elementos visuais; a autoria não é atribuída automaticamente.');
-    L.push(list(a.signatures, 10));
-  }
+  if (empty.length) L.push(`_${NOT_FOUND.replace(/\.$/, '')}: ${empty.join('; ')}._`);
   return L.join('\n\n');
 }
 

@@ -91,8 +91,10 @@ function JobCard({ job }: { job: Job }) {
   );
 }
 
-export function JobList() {
-  const jobs = useJobs();
+/** Lista da fila. `onlyIds` restringe aos trabalhos enviados por uma tela (ex.: um processo do Workspace). */
+export function JobList({ onlyIds }: { onlyIds?: Set<string> } = {}) {
+  const all = useJobs();
+  const jobs = onlyIds ? all.filter((j) => onlyIds.has(j.id)) : all;
   if (!jobs.length) return null;
   const done = jobs.filter((j) => j.status === 'done' && j.result);
   const active = jobs.some((j) => j.status === 'running' || j.status === 'queued');

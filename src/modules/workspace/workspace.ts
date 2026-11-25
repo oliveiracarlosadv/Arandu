@@ -4,7 +4,7 @@
 import JSZip from 'jszip';
 import type { ProcessResult } from '../../types';
 import { db } from '../../services/db';
-import { downloadBlob, outputName, uid } from '../../utils/format';
+import { downloadBlob, safeFileName, uid } from '../../utils/format';
 import { parseDate } from '../legal/extractor';
 import { PATTERNS } from '../legal/patterns';
 
@@ -29,6 +29,15 @@ export interface WorkspaceDoc {
   documentDateTs?: number;
   tribunal?: string;
   result: ProcessResult;
+}
+
+/** Data do documento em dd/mm/aaaa (ou o texto literal, se não for possível normalizar). */
+export function docDateLabel(d: Pick<WorkspaceDoc, 'documentDate' | 'documentDateTs'>): string {
+  if (d.documentDateTs !== undefined) {
+    const t = new Date(d.documentDateTs);
+    return `${String(t.getUTCDate()).padStart(2, '0')}/${String(t.getUTCMonth() + 1).padStart(2, '0')}/${t.getUTCFullYear()}`;
+  }
+  return d.documentDate ?? 'Não identificado no documento.';
 }
 
 export const AREAS = ['Trabalhista', 'Cível', 'Previdenciário', 'Tributário', 'Criminal', 'Família', 'Consumidor', 'Administrativo', 'Empresarial', 'Outra'];
@@ -81,10 +90,10 @@ export function suggestedProcess(r: ProcessResult): string | undefined {
 
 // ---------- Exportação ----------
 
-function fileNames(docs: WorkspaceDoc[]): string[] {
+export function fileNames(docs: WorkspaceDoc[]): string[] {
   const used = new Map<string, number>();
   return docs.map((d, i) => {
-    const base = outputName(`${String(i + 1).padStart(2, '0')} - ${d.displayName}`, 'md');
+    const base = `${safeFileName(`${String(i + 1).padStart(2, '0')} - ${d.displayName}`)}.md`;
     const n = used.get(base) ?? 0;
     used.set(base, n + 1);
     return n ? base.replace(/\.md$/, ` (${n + 1}).md`) : base;
@@ -101,7 +110,7 @@ export function caseIndexMarkdown(c: LegalCase, docs: WorkspaceDoc[], names: str
     '',
     '| # | Documento | Tipo | Data do documento | Arquivo original |',
     '|---|---|---|---|---|',
-    ...docs.map((d, i) => `| ${i + 1} | [${d.displayName}](./${encodeURI(names[i])}) | ${d.documentType} | ${d.documentDate ?? 'Não identificado no documento.'} | ${d.result.fileName.replace(/\|/g, '\\|')} |`),
+    ...docs.map((d, i) => `| ${i + 1} | [${d.displayName}](./${encodeURI(names[i])}) | ${d.documentType} | ${docDateLabel(d)} | ${d.result.fileName.replace(/\|/g, '\\|')} |`),
     '',
     '> Cada documento está em arquivo próprio. O conteúdo de documentos diferentes não foi misturado.',
   ];
@@ -133,17 +142,25 @@ export function buildChronology(docs: WorkspaceDoc[], names: string[]): string {
     const re = new RegExp(`${PATTERNS.dateNumeric.source}|${PATTERNS.dateLong.source}`, 'gi');
     let count = 0;
     const seen = new Set<string>();
+    const docDateText = d.documentDate?.replace(/\s+/g, ' ').trim();
     for (const m of text.matchAll(re)) {
       if (count >= 25) break;
       const ts = parseDate(m[0]);
       if (ts === null) continue;
+      // A data do documento já é um evento próprio: não repete a frase de fecho/abertura que a contém.
+      if (ts === d.documentDateTs && docDateText) {
+        const around = text.slice(Math.max(0, (m.index ?? 0) - 60), (m.index ?? 0) + m[0].length + 5).replace(/\s+/g, ' ');
+        if (around.includes(docDateText) || docDateText.includes(m[0])) continue;
+      }
       const idx = m.index ?? 0;
       const start = Math.max(0, text.lastIndexOf('.', idx) + 1, text.lastIndexOf('\n', idx) + 1);
       const endRel = text.slice(idx).search(/[.\n]/);
       let sent = text.slice(start, endRel === -1 ? text.length : idx + endRel + 1).replace(/\s+/g, ' ').trim();
       if (sent.length > 260) sent = sent.slice(0, 260).replace(/\s+\S*$/, '') + ' […]';
-      if (sent.length < 15 || seen.has(sent)) continue;
-      seen.add(sent);
+      // Uma frase com várias datas gera um evento para cada data.
+      const key = `${ts}|${sent}`;
+      if (sent.length < 15 || seen.has(key)) continue;
+      seen.add(key);
       const page = pageOf(d.result, sent);
       events.push({ ts, date: m[0], text: `"${sent}"`, file, page });
       count++;
@@ -182,6 +199,6 @@ export async function exportCaseZip(c: LegalCase, docs: WorkspaceDoc[]) {
   zip.file('INDICE.md', caseIndexMarkdown(c, docs, names));
   zip.file('CRONOLOGIA.md', buildChronology(docs, names));
   const blob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE' });
-  downloadBlob(blob, outputName(c.processNumber ?? c.title, 'zip'));
+  downloadBlob(blob, `${safeFileName(c.processNumber ?? c.title)}.zip`);
 }
 

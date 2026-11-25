@@ -187,7 +187,8 @@ export function analyzeLegal(blocks: Block[], fullText: string): LegalAnalysis {
   // Data do documento: fecho "Cidade, DD de mês de AAAA" (último no documento) ou "Data:" explícita.
   const closings = findAll(new RegExp(`[A-ZÀ-Ú][\\wÀ-ú ]{2,30}(?:\\s*[/-]\\s*[A-Z]{2})?,\\s*${PATTERNS.dateLong.source.replace(/^\\b/, '')}`, 'gi'), segs, 50);
   const explicitDate = findAll(/\bData(?: do documento| de emiss[ãa]o| da assinatura)?\s*:\s*\d{1,2}\/\d{1,2}\/\d{4}/gi, segs, 3);
-  const documentDate = closings.length ? closings[closings.length - 1] : explicitDate[0];
+  const opening = findAll(new RegExp(`\\b(?:Aos|Em|No dia)\\s+(?:${PATTERNS.dateNumeric.source.replace(/^\\b/, '')}|${PATTERNS.dateLong.source.replace(/^\\b/, '')})`, 'gi'), segs.slice(0, 30), 1);
+  const documentDate = closings.length ? closings[closings.length - 1] : explicitDate[0] ?? opening[0];
   const publication = findAll(/(?:publicad[oa]|disponibilizad[oa]|data de publica[çc][ãa]o|DEJT|DJE?N?)[^\n.]{0,60}?\d{1,2}\/\d{1,2}\/\d{4}/gi, segs, 3);
 
   const statutes = [

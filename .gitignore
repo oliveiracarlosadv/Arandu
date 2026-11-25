@@ -1,0 +1,12 @@
+node_modules
+dist
+dev-dist
+.DS_Store
+*.log
+coverage
+# assets copiados de node_modules no postinstall
+public/vendor
+
+# material de apoio local (não versionar)
+Texto Release.rtf
+.claude/

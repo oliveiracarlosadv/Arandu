@@ -1,0 +1,96 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+
+  /* Verde profundo → esmeralda (identidade ARANDU) */
+  --color-brand-50: #ecfdf6;
+  --color-brand-100: #d1fae8;
+  --color-brand-200: #a6f2d2;
+  --color-brand-300: #6ce4b6;
+  --color-brand-400: #34cf96;
+  --color-brand-500: #10b07c;
+  --color-brand-600: #0a8f65;
+  --color-brand-700: #087254;
+  --color-brand-800: #085a44;
+  --color-brand-900: #064a39;
+  --color-brand-950: #032a21;
+
+  /* Neutros */
+  --color-ink-50: #f7f8f8;
+  --color-ink-100: #eef0ef;
+  --color-ink-200: #dfe3e1;
+  --color-ink-300: #c4cbc8;
+  --color-ink-400: #8f9995;
+  --color-ink-500: #67716d;
+  --color-ink-600: #4d5653;
+  --color-ink-700: #363d3b;
+  --color-ink-800: #1f2523;
+  --color-ink-850: #171c1a;
+  --color-ink-900: #111513;
+  --color-ink-950: #0a0d0c;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    @apply bg-ink-50 text-ink-900 dark:bg-ink-950 dark:text-ink-100;
+    font-feature-settings: "cv11", "ss01";
+  }
+  ::selection {
+    @apply bg-brand-200 text-brand-950 dark:bg-brand-800 dark:text-brand-50;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand-500;
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-2xl border border-ink-200/80 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04)] dark:border-white/[0.07] dark:bg-ink-900;
+  }
+  .label {
+    @apply text-[11px] font-medium uppercase tracking-[0.08em] text-ink-500 dark:text-ink-400;
+  }
+  .scroll-thin {
+    scrollbar-width: thin;
+  }
+}
+
+/* Pré-visualização do Markdown */
+.md-preview {
+  @apply text-[14.5px] leading-relaxed text-ink-800 dark:text-ink-200;
+}
+.md-preview h1 { @apply mt-2 mb-4 text-2xl font-semibold tracking-tight text-ink-950 dark:text-white; }
+.md-preview h2 { @apply mt-8 mb-3 border-b border-ink-200 pb-1.5 text-lg font-semibold text-ink-950 dark:border-white/10 dark:text-white; }
+.md-preview h3 { @apply mt-6 mb-2 text-base font-semibold text-ink-900 dark:text-ink-50; }
+.md-preview h4, .md-preview h5, .md-preview h6 { @apply mt-4 mb-1.5 text-sm font-semibold text-ink-900 dark:text-ink-100; }
+.md-preview p { @apply my-2.5; }
+.md-preview ul { @apply my-2 list-disc pl-6; }
+.md-preview ol { @apply my-2 list-decimal pl-6; }
+.md-preview li { @apply my-0.5; }
+.md-preview blockquote { @apply my-3 rounded-r-lg border-l-[3px] border-brand-500 bg-brand-50/60 px-4 py-2 text-ink-700 dark:bg-brand-950/40 dark:text-ink-300; }
+.md-preview table { @apply my-3 w-full border-collapse text-sm; }
+.md-preview th, .md-preview td { @apply border border-ink-200 px-2.5 py-1.5 text-left align-top dark:border-white/10; }
+.md-preview th { @apply bg-ink-100 font-semibold dark:bg-white/5; }
+.md-preview code { @apply rounded bg-ink-100 px-1 py-0.5 font-mono text-[0.85em] dark:bg-white/10; }
+.md-preview hr { @apply my-6 border-ink-200 dark:border-white/10; }
+.md-preview a { @apply text-brand-700 underline decoration-brand-300 underline-offset-2 dark:text-brand-300; }
+.md-preview em { @apply text-ink-500 dark:text-ink-400; }
+
+@keyframes arandu-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+.animate-soft-pulse { animation: arandu-pulse 1.6s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

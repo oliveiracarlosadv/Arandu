@@ -123,7 +123,10 @@ export interface ProcessResult {
   fileName: string;
   fileSize: number;
   format: SourceFormat;
+  /** Data/hora em que o processamento terminou. */
   createdAt: number;
+  /** Data/hora em que o arquivo foi anexado (entrou na fila). */
+  attachedAt?: number;
   mode: ConversionMode;
   markdown: string;
   rawText: string;
@@ -169,7 +172,11 @@ export interface Job {
   steps: StepState[];
   result?: ProcessResult;
   error?: string;
+  /** Data/hora em que o arquivo foi anexado. */
+  addedAt: number;
   startedAt?: number;
+  /** Data/hora em que o processamento terminou (com sucesso, erro ou cancelamento). */
+  finishedAt?: number;
 }
 
 export type ProgressFn = (step: number, state: StepState) => void;

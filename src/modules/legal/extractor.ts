@@ -123,7 +123,7 @@ function extractParties(segs: Segment[]): LegalParty[] {
   for (const s of segs.slice(0, 400)) {
     for (const m of s.text.matchAll(ROLE_RE)) {
       let name = m[2].replace(/\s+(CPF|CNPJ|RG|portador|inscrit|brasileir|residente|domiciliad|ADVOGAD|Advogad).*$/i, '').trim();
-      name = name.replace(/[,.]$/, '').trim();
+      name = trimName(name);
       if (name.length < 3) continue;
       const role = m[1][0].toUpperCase() + m[1].slice(1).toLowerCase();
       const k = role + '|' + name.toLowerCase();
@@ -133,7 +133,68 @@ function extractParties(segs: Segment[]): LegalParty[] {
       if (out.length >= 20) return out;
     }
   }
+  if (!out.length) out.push(...partiesFromEmFaceDe(segs));
   return out;
+}
+
+/**
+ * Petições sem rótulos ("RECLAMANTE:") costumam qualificar as partes na abertura:
+ * "FULANO, brasileiro, ..., vem ... propor AÇÃO ... em face de BELTRANO LTDA, ...".
+ * Extrai literalmente o nome antes da 1ª vírgula e o nome após "em face de".
+ */
+/** Remove pontuação final do nome, preservando abreviações societárias (S.A., Ltda., Cia., S/A). */
+function trimName(n: string): string {
+  const t = n.trim().replace(/[,;:]+$/, '').trim();
+  if (/(?:\b[A-Z]\.[A-Z]\.|\bLtda\.|\bLTDA\.|\bCia\.|\bS\/A\.?|\bME\.|\bEPP\.)$/.test(t)) return t;
+  return t.replace(/\.+$/, '').trim();
+}
+
+function partiesFromEmFaceDe(segs: Segment[]): LegalParty[] {
+  for (const s of segs.slice(0, 60)) {
+    const t = s.text;
+    const i = t.search(/\bem face d[eoa]s?\s/i);
+    if (i < 0 || !/\bvem\b|\bvêm\b|\bpropõe\b|\bajuíza\b/i.test(t.slice(0, i))) continue;
+    const active = t.slice(0, t.indexOf(',') > 0 && t.indexOf(',') < i ? t.indexOf(',') : t.search(/\s(?:vem|vêm)\b/i)).trim();
+    const afterRaw = t.slice(i).replace(/^em face d[eoa]s?\s+/i, '');
+    // Ponto só encerra o nome quando não é abreviação (S.A., Ltda., S/A).
+    const passive = trimName(afterRaw.split(/[,;]|(?<!\b[A-Za-z]|Ltda|LTDA|Cia|CIA)\.\s|\s(?:pelos|pelas|pelo|pela|com sede|inscrit[oa]|pessoa jurídica)\b/)[0]);
+    const looksLikeName = (n: string) => n.length >= 3 && n.length <= 90 && /^[A-ZÀ-Ú]/.test(n) && n.split(/\s+/).length <= 12;
+    const out: LegalParty[] = [];
+    if (looksLikeName(active)) out.push({ role: 'Parte autora', name: active, page: s.page });
+    if (looksLikeName(passive)) out.push({ role: 'Parte ré', name: passive, page: s.page });
+    if (out.length) return out;
+  }
+  return [];
+}
+
+const ACTIVE_ROLES = /^(reclamante|autor|autora|autores|autoras|parte autora|requerente|apelante|agravante|recorrente|impetrante|exequente|embargante|notificante|outorgante|contratante|paciente)$/i;
+const PASSIVE_ROLES = /^(reclamad[oa]|r[ée]u|r[ée]|parte r[ée]|requerid[oa]|apelad[oa]|agravad[oa]|recorrid[oa]|impetrad[oa]|executad[oa]|embargad[oa]|notificad[oa]|outorgad[oa]|contratad[oa])$/i;
+
+export interface ProcessSummary {
+  numero?: string;
+  autor?: string;
+  reu?: string;
+  tribunal?: string;
+}
+
+/** Resumo do processo para o histórico: número, polo ativo, polo passivo e tribunal (dados literais). */
+export function processSummary(a: LegalAnalysis): ProcessSummary | undefined {
+  if (!a.isLegal) return undefined;
+  const names = (re: RegExp) => {
+    const list = [...new Set(a.parties.filter((p) => re.test(p.role)).map((p) => p.name))];
+    return list.length ? list.slice(0, 2).join(', ') + (list.length > 2 ? ` e outros (${list.length - 2})` : '') : undefined;
+  };
+  const cnjShort = a.tribunalFromCnj?.match(/\(([A-Z]{2,5}\d{0,2})\)/)?.[1];
+  // tribunalFromCnj = "<tribunal> — <segmento da Justiça>[ (aviso)]": remove só o último trecho.
+  const fromCnj = a.tribunalFromCnj ? a.tribunalFromCnj.slice(0, a.tribunalFromCnj.lastIndexOf(' \u2014 ')).trim() || a.tribunalFromCnj : undefined;
+  const tribunal = a.tribunal[0]?.value ?? fromCnj;
+  const out: ProcessSummary = {
+    numero: a.processNumbers[0]?.value,
+    autor: names(ACTIVE_ROLES),
+    reu: names(PASSIVE_ROLES),
+    tribunal: tribunal ? tribunal.replace(/\s+/g, ' ') : cnjShort,
+  };
+  return out.numero || out.autor || out.reu || out.tribunal ? out : undefined;
 }
 
 function extractLawyers(segs: Segment[]): LegalLawyer[] {

@@ -9,7 +9,7 @@ import { clearHistory, deleteHistoryEntry, listHistory, type HistoryEntry } from
 import { updateSettings, useSettings } from '../services/settings';
 import { useAiState, navigate } from '../hooks/useAppState';
 import type { ConversionMode } from '../types';
-import { fmtDate, fmtInt } from '../utils/format';
+import { fmtDateTime, fmtInt } from '../utils/format';
 import { useJobs } from '../modules/batch/queue';
 
 const MODES: { value: ConversionMode; label: string; desc: string }[] = [
@@ -20,6 +20,20 @@ const MODES: { value: ConversionMode; label: string; desc: string }[] = [
 ];
 
 const MODE_LABEL: Record<ConversionMode, string> = { fidelity: 'Fidelidade', ai: 'Otimizado', summary: 'Resumo', legal: 'Jurídico' };
+
+const NA = 'não identificado';
+
+/** Linha do processo no histórico: autor, réu e tribunal (e número, quando houver). */
+function ProcessLine({ p }: { p: NonNullable<HistoryEntry['processo']> }) {
+  return (
+    <dl className="flex w-full flex-wrap gap-x-4 gap-y-0.5 pl-[26px] text-[12px] text-ink-500 dark:text-ink-400">
+      {p.numero && <div><dt className="inline font-medium text-ink-700 dark:text-ink-300">Processo:</dt> <dd className="inline font-mono">{p.numero}</dd></div>}
+      <div><dt className="inline font-medium text-ink-700 dark:text-ink-300">Autor:</dt> <dd className="inline">{p.autor ?? NA}</dd></div>
+      <div><dt className="inline font-medium text-ink-700 dark:text-ink-300">Réu:</dt> <dd className="inline">{p.reu ?? NA}</dd></div>
+      <div><dt className="inline font-medium text-ink-700 dark:text-ink-300">Tribunal:</dt> <dd className="inline">{p.tribunal ?? NA}</dd></div>
+    </dl>
+  );
+}
 
 function History() {
   const [items, setItems] = useState<HistoryEntry[] | null>(null);
@@ -43,7 +57,9 @@ function History() {
             <Badge>{MODE_LABEL[h.mode]}</Badge>
             <span className="text-ink-500">{h.documentType}</span>
             <span className="tabular-nums text-ink-500">{fmtInt(h.stats.originalTokens)} → {fmtInt(h.stats.finalTokens)}</span>
-            <span className="text-ink-400">{fmtDate(h.createdAt)}</span>
+            <span className="text-[12px] text-ink-400" title={h.attachedAt ? `Anexado em ${fmtDateTime(h.attachedAt)}` : undefined}>
+              {h.attachedAt && <>Anexado {fmtDateTime(h.attachedAt)} · </>}Processado {fmtDateTime(h.createdAt)}
+            </span>
             {h.result ? (
               <Button size="sm" onClick={() => navigate(`/resultado/h:${h.id}`)}>Abrir</Button>
             ) : (
@@ -52,6 +68,7 @@ function History() {
             <button type="button" aria-label="Remover do histórico" className="rounded p-1 text-ink-400 hover:text-ink-700" onClick={async () => { await deleteHistoryEntry(h.id); setItems((x) => x?.filter((i) => i.id !== h.id) ?? null); }}>
               <Icon name="x" size={13} />
             </button>
+            {h.processo && <ProcessLine p={h.processo} />}
           </div>
         ))}
       </div>

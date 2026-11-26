@@ -4,17 +4,23 @@
 import type { ProcessResult } from '../types';
 import { db } from './db';
 import { getSettings } from './settings';
+import { processSummary, type ProcessSummary } from '../modules/legal/extractor';
 
 export interface HistoryEntry {
   id: string;
   fileName: string;
+  /** Data/hora do processamento. */
   createdAt: number;
+  /** Data/hora em que o arquivo foi anexado. */
+  attachedAt?: number;
   documentType: string;
   pageCount: number;
   mode: ProcessResult['mode'];
   stats: ProcessResult['stats'];
   durationMs: number;
   method: ProcessResult['method'];
+  /** Quando é processo: número, autor (polo ativo), réu (polo passivo) e tribunal. */
+  processo?: ProcessSummary;
   /** Presente apenas com autorização (storeResultContent). */
   result?: ProcessResult;
 }
@@ -25,12 +31,14 @@ export async function addToHistory(r: ProcessResult): Promise<void> {
     id: r.id,
     fileName: r.fileName,
     createdAt: r.createdAt,
+    attachedAt: r.attachedAt,
     documentType: r.documentType,
     pageCount: r.pageCount,
     mode: r.mode,
     stats: r.stats,
     durationMs: r.durationMs,
     method: r.method,
+    processo: r.legal ? processSummary(r.legal) : undefined,
     result: s.storeResultContent ? r : undefined,
   };
   await db.put('history', entry);

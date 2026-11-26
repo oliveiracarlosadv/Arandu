@@ -29,7 +29,8 @@ export function configureQueue(cfg: { ensureOcr: EnsureOcr; options: () => Proce
 const freshSteps = (): StepState[] => STEP_LABELS.map(() => ({ status: 'pending' }));
 
 export function enqueue(files: File[]): string[] {
-  const added = files.map<Job>((file) => ({ id: uid(), file, status: 'queued', steps: freshSteps() }));
+  const now = Date.now();
+  const added = files.map<Job>((file) => ({ id: uid(), file, status: 'queued', steps: freshSteps(), addedAt: now }));
   jobs = [...jobs, ...added];
   emit();
   void run();
@@ -57,13 +58,15 @@ async function run() {
           ensureOcr: ensureOcrHook,
           onStep: (i, st) => patch(next.id, (j) => ({ ...j, steps: j.steps.map((s, k) => (k === i ? st : s)) })),
         });
-        patch(next.id, (j) => ({ ...j, status: 'done', result }));
-        addToHistory(result).catch(() => undefined);
+        const done = { ...result, attachedAt: next.addedAt };
+        patch(next.id, (j) => ({ ...j, status: 'done', result: done, finishedAt: done.createdAt }));
+        addToHistory(done).catch(() => undefined);
       } catch (e) {
         const cancelled = e instanceof DOMException && e.name === 'AbortError';
         patch(next.id, (j) => ({
           ...j,
           status: cancelled ? 'cancelled' : 'error',
+          finishedAt: Date.now(),
           error: cancelled ? 'Cancelado pelo usuário' : e instanceof Error ? e.message : String(e),
           steps: j.steps.map((s) => (s.status === 'running' ? { ...s, status: cancelled ? 'skipped' : 'error' } : s)),
         }));
@@ -89,7 +92,7 @@ export function stopAll() {
 }
 
 export function retryJob(id: string) {
-  patch(id, (j) => ({ ...j, status: 'queued', error: undefined, result: undefined, steps: freshSteps() }));
+  patch(id, (j) => ({ ...j, status: 'queued', error: undefined, result: undefined, finishedAt: undefined, steps: freshSteps() }));
   void run();
 }
 

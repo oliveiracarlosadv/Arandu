@@ -16,6 +16,9 @@ export function fmtDuration(ms: number): string {
   return `${Math.floor(ms / 60000)} min ${Math.round((ms % 60000) / 1000)} s`;
 }
 
+/** Data e hora completas (dd/mm/aaaa hh:mm:ss). */
+export const fmtDateTime = (t: number) => new Date(t).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'medium' });
+
 export const fmtDate = (t: number) => new Date(t).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
 
 /** Nome seguro para arquivo, sem tratar pontos como extensão (ex.: números de processo CNJ). */

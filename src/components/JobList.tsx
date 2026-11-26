@@ -3,7 +3,7 @@ import { STEP_LABELS, type Job } from '../types';
 import { cancelJob, clearFinished, removeJob, retryJob, stopAll, useJobs } from '../modules/batch/queue';
 import { downloadMarkdown, downloadZip } from '../modules/batch/exporters';
 import { navigate } from '../hooks/useAppState';
-import { fmtBytes, fmtDuration, fmtInt } from '../utils/format';
+import { fmtBytes, fmtDateTime, fmtDuration, fmtInt } from '../utils/format';
 import { Badge, Button, Icon, ProgressBar, cx } from './ui';
 
 function jobProgress(j: Job): number {
@@ -50,6 +50,11 @@ function JobCard({ job }: { job: Job }) {
             {running && currentStep >= 0 && <> · {STEP_LABELS[currentStep]}{job.steps[currentStep].detail ? ` — ${job.steps[currentStep].detail}` : ''}</>}
             {r && <> · {r.pageCount} p. · {fmtDuration(r.durationMs)} · {fmtInt(r.stats.originalTokens)} → {fmtInt(r.stats.finalTokens)} tokens{r.stats.reductionCounted && <span className="font-medium text-brand-700 dark:text-brand-300"> (−{r.stats.reductionPct}%)</span>}</>}
             {job.error && <span className="text-red-600 dark:text-red-400"> · {job.error}</span>}
+          </div>
+          <div className="mt-0.5 text-[11.5px] text-ink-400 dark:text-ink-500">
+            Anexado em {fmtDateTime(job.addedAt)}
+            {job.finishedAt && <> · {job.status === 'done' ? 'Processado' : job.status === 'cancelled' ? 'Cancelado' : 'Falhou'} em {fmtDateTime(job.finishedAt)}</>}
+            {job.status === 'running' && job.startedAt && <> · Processando desde {fmtDateTime(job.startedAt)}</>}
           </div>
         </div>
         <div className="flex shrink-0 flex-wrap items-center gap-1.5">

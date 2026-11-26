@@ -7,9 +7,10 @@ import { listHistory } from '../services/history';
 import { MarkdownPreview } from '../components/MarkdownPreview';
 import { Badge, Button, Icon, Modal, Segmented, Stat, cx } from '../components/ui';
 import { navigate } from '../hooks/useAppState';
-import { fmtBytes, fmtDuration, fmtInt } from '../utils/format';
+import { fmtBytes, fmtDateTime, fmtDuration, fmtInt } from '../utils/format';
 import { addDocToCase, AREAS, listCases, saveCase, suggestedProcess, type LegalCase } from '../modules/workspace/workspace';
 import { NOT_FOUND } from '../modules/legal/legalMarkdown';
+import { processSummary } from '../modules/legal/extractor';
 
 type Tab = 'preview' | 'edit' | 'compare' | 'legal';
 
@@ -103,7 +104,7 @@ function AddToWorkspace({ r, open, onClose }: { r: ProcessResult; open: boolean;
   const submit = async () => {
     let id = caseId;
     if (id === 'new') {
-      const c = await saveCase({ title: title || r.fileName, processNumber: /^\d{7}-\d{2}\./.test(title) ? title : proc, client: client || undefined, area: area || undefined, tribunal: r.legal?.tribunalFromCnj?.split(' — ')[0] });
+      const c = await saveCase({ title: title || r.fileName, processNumber: /^\d{7}-\d{2}\./.test(title) ? title : proc, client: client || undefined, area: area || undefined, tribunal: r.legal ? processSummary(r.legal)?.tribunal : undefined });
       id = c.id;
     }
     await addDocToCase(id, r);
@@ -189,6 +190,9 @@ export default function ResultPage({ id }: { id?: string }) {
           <div className="mt-1.5 flex flex-wrap items-center gap-2 text-[13px] text-ink-500">
             <Badge tone="brand">{r.documentType}</Badge>
             <span>{fmtBytes(r.fileSize)}</span>·<span>{methodLabel(r.method)}</span>
+          </div>
+          <div className="mt-1 text-[12px] text-ink-500">
+            {r.attachedAt && <>Anexado em {fmtDateTime(r.attachedAt)} · </>}Processado em {fmtDateTime(r.createdAt)}
           </div>
         </div>
         <div className="flex flex-wrap gap-1.5">

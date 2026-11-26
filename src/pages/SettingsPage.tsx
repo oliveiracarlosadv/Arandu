@@ -81,7 +81,7 @@ export default function SettingsPage() {
             checked={s.storeResultContent}
             onChange={(v) => updateSettings({ storeResultContent: v })}
             label="Guardar conteúdo dos resultados no histórico"
-            description="Desativado por padrão: o histórico guarda só nome, data e estatísticas. Ative para reabrir documentos depois."
+            description="Desativado por padrão: o histórico guarda só nome, datas, estatísticas e, em processos, número, autor, réu e tribunal. Ative para reabrir documentos depois."
           />
           <label className="flex items-center justify-between gap-4 py-2">
             <span>

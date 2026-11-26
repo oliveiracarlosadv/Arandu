@@ -11,6 +11,7 @@ export function toJson(r: ProcessResult) {
     schema: 'arandu.result/v1',
     gerador: 'ARANDU — processamento local',
     arquivo: { nome: r.fileName, tamanhoBytes: r.fileSize, formato: r.format },
+    anexadoEm: r.attachedAt ? new Date(r.attachedAt).toISOString() : null,
     processadoEm: new Date(r.createdAt).toISOString(),
     modo: r.mode,
     tipoDocumento: r.documentType,

@@ -5,7 +5,7 @@ import JSZip from 'jszip';
 import type { ProcessResult } from '../../types';
 import { db } from '../../services/db';
 import { downloadBlob, safeFileName, uid } from '../../utils/format';
-import { parseDate } from '../legal/extractor';
+import { parseDate, processSummary } from '../legal/extractor';
 import { PATTERNS } from '../legal/patterns';
 
 export interface LegalCase {
@@ -73,7 +73,7 @@ export async function addDocToCase(caseId: string, result: ProcessResult): Promi
     documentType: result.documentType,
     documentDate: dd,
     documentDateTs: ts,
-    tribunal: result.legal?.tribunal[0]?.value ?? result.legal?.tribunalFromCnj,
+    tribunal: result.legal ? processSummary(result.legal)?.tribunal : undefined,
     result,
   };
   await db.put('workspace', doc);

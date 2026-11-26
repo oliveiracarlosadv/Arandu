@@ -90,7 +90,11 @@ Estratégia: extração determinística sempre que possível → OCR apenas quan
 
 ## Licença
 
-MIT. Modelos de IA sob as licenças de seus autores (Qwen2.5: Apache-2.0). Tesseract.js e dados de idioma: Apache-2.0.
+- **Código:** [MIT](LICENSE).
+- **Documentação e textos:** [CC BY 4.0](LICENSE-DOCS).
+- **Nome, logotipo, ícones e fotografia:** todos os direitos reservados. Forks devem usar identidade visual própria.
+
+Detalhes, atribuição e componentes de terceiros em [NOTICE.md](NOTICE.md). Modelos de IA seguem as licenças de seus autores (Qwen2.5: Apache-2.0).
 
 ## Criador
 

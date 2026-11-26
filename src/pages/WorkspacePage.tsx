@@ -4,7 +4,8 @@ import { MarkdownPreview } from '../components/MarkdownPreview';
 import { DropZone } from '../components/DropZone';
 import { JobList } from '../components/JobList';
 import { navigate } from '../hooks/useAppState';
-import { enqueue, useJobs } from '../modules/batch/queue';
+import { useJobs } from '../modules/batch/queue';
+import { chooseModeAndEnqueue } from '../components/ModeDialog';
 import { downloadMarkdown } from '../modules/batch/exporters';
 import {
   addDocToCase, AREAS, buildChronology, caseIndexMarkdown, deleteCase, docDateLabel, exportCaseZip, fileNames, listCases, listDocs, removeDoc, saveCase,
@@ -165,8 +166,8 @@ function CaseDetail({ caseId }: { caseId: string }) {
       <div className="mt-6">
         <div className="label mb-2">Processar e adicionar documentos a este processo</div>
         <DropZone
-          onFiles={(files) => {
-            const ids = enqueue(files);
+          onFiles={async (files) => {
+            const ids = await chooseModeAndEnqueue(files);
             ids.forEach((id) => pending.current.add(id));
             setMine((m) => new Set([...m, ...ids]));
           }}

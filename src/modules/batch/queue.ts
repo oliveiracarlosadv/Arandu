@@ -28,9 +28,11 @@ export function configureQueue(cfg: { ensureOcr: EnsureOcr; options: () => Proce
 
 const freshSteps = (): StepState[] => STEP_LABELS.map(() => ({ status: 'pending' }));
 
-export function enqueue(files: File[]): string[] {
+/** Enfileira arquivos com as opções vigentes (ou as informadas), fixadas por arquivo. */
+export function enqueue(files: File[], options?: Partial<ProcessOptions>): string[] {
   const now = Date.now();
-  const added = files.map<Job>((file) => ({ id: uid(), file, status: 'queued', steps: freshSteps(), addedAt: now }));
+  const opts: ProcessOptions = { ...optionsProvider(), ...options };
+  const added = files.map<Job>((file) => ({ id: uid(), file, status: 'queued', steps: freshSteps(), addedAt: now, options: opts }));
   jobs = [...jobs, ...added];
   emit();
   void run();
@@ -53,7 +55,7 @@ async function run() {
       controllers.set(next.id, ctrl);
       patch(next.id, (j) => ({ ...j, status: 'running', startedAt: Date.now() }));
       try {
-        const result = await processFile(next.file, optionsProvider(), {
+        const result = await processFile(next.file, next.options ?? optionsProvider(), {
           signal: ctrl.signal,
           ensureOcr: ensureOcrHook,
           onStep: (i, st) => patch(next.id, (j) => ({ ...j, steps: j.steps.map((s, k) => (k === i ? st : s)) })),

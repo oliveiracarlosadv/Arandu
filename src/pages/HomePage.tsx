@@ -4,22 +4,15 @@ import { DropZone } from '../components/DropZone';
 import { JobList } from '../components/JobList';
 import { StatusIndicators } from '../components/StatusIndicators';
 import { Badge, Button, Icon, Segmented, Toggle, cx } from '../components/ui';
-import { enqueue } from '../modules/batch/queue';
+import { chooseModeAndEnqueue } from '../components/ModeDialog';
+import { MODES, MODE_LABEL } from '../modules/batch/modes';
 import { clearHistory, deleteHistoryEntry, listHistory, type HistoryEntry } from '../services/history';
 import { updateSettings, useSettings } from '../services/settings';
 import { useAiState, navigate } from '../hooks/useAppState';
-import type { ConversionMode } from '../types';
 import { fmtDateTime, fmtInt } from '../utils/format';
 import { useJobs } from '../modules/batch/queue';
 
-const MODES: { value: ConversionMode; label: string; desc: string }[] = [
-  { value: 'fidelity', label: 'Fidelidade máxima', desc: 'Preserva integralmente conteúdo e estrutura; só normaliza o necessário.' },
-  { value: 'ai', label: 'Otimizado para IA', desc: 'Remove ruído de formatação, cabeçalhos repetidos e quebras artificiais, sem perder informação.' },
-  { value: 'summary', label: 'Resumo inteligente', desc: 'Adiciona uma síntese separada, mantendo o conteúdo integral abaixo.' },
-  { value: 'legal', label: 'Jurídico estruturado', desc: 'Destaca partes, pedidos, fundamentos, decisão, prazos e referências legais.' },
-];
 
-const MODE_LABEL: Record<ConversionMode, string> = { fidelity: 'Fidelidade', ai: 'Otimizado', summary: 'Resumo', legal: 'Jurídico' };
 
 const NA = 'não identificado';
 
@@ -94,7 +87,7 @@ export function HomePage() {
       <StatusIndicators />
 
       <section className="mt-6 card p-4 sm:p-5" aria-label="Opções de conversão">
-        <div className="label mb-2.5">Modo de conversão</div>
+        <div className="label mb-2.5">Modo de conversão <span className="normal-case tracking-normal font-normal text-ink-400">· confirmado a cada envio</span></div>
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4" role="radiogroup" aria-label="Modo de conversão">
           {MODES.map((m) => (
             <button
@@ -146,7 +139,7 @@ export function HomePage() {
       </section>
 
       <div className="mt-6">
-        <DropZone onFiles={(files) => enqueue(files)} />
+        <DropZone onFiles={(files) => void chooseModeAndEnqueue(files)} />
       </div>
 
       <JobList />

@@ -174,6 +174,8 @@ export interface Job {
   error?: string;
   /** Data/hora em que o arquivo foi anexado. */
   addedAt: number;
+  /** Opções escolhidas no momento do envio (modo de conversão etc.). */
+  options?: ProcessOptions;
   startedAt?: number;
   /** Data/hora em que o processamento terminou (com sucesso, erro ou cancelamento). */
   finishedAt?: number;
